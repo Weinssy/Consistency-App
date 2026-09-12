@@ -1,0 +1,51 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer habit progress ring -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,26 A28,28 0 1,1 26,54"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeColor="#6366F1" />
+
+    <!-- Ring completion highlight -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M26,54 A28,28 0 0,1 54,26"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeColor="#10B981" />
+
+    <!-- Center circle badge with gradient -->
+    <path android:pathData="M54,34 A20,20 0 1,1 53.9,34 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="34"
+                android:startY="34"
+                android:endX="74"
+                android:endY="74"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#10B981" />
+                <item android:offset="1.0" android:color="#059669" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Crisp white checkmark -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M44,54 L51,61 L65,47"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FFFFFF" />
+
+    <!-- Small bell reminder accent -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M72,30 A4,4 0 1,1 71.9,30 Z" />
+</vector>

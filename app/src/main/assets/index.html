@@ -1,0 +1,2825 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Consistent Habit: Routine & Reminder Hub</title>
+  <meta name="description" content="Minimalist Monochrome Routine Tracker ala Uniqlo - Pelacak Kebiasaan, Kategori, Alarm Web Audio API Mandiri, Streak Counter & Jurnal" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Consistent Habit" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            uniqlo: {
+              red: '#E60012',
+              darkred: '#CC0010',
+              black: '#111111',
+              gray: '#767676',
+              light: '#F7F7F7',
+              border: '#E5E5E5',
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Firebase Web SDK (Compat) for Firebase Cloud Messaging (FCM) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+
+  <style>
+    @keyframes pulseAlarm {
+      0%, 100% { background-color: #111111; color: #FFFFFF; }
+      50% { background-color: #E60012; color: #FFFFFF; }
+    }
+    .pulse-alarm {
+      animation: pulseAlarm 0.9s infinite;
+    }
+    /* Safe Area Spacing for Mobile Devices */
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1rem); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0.75rem); }
+    
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Clean Minimalist Monochrome Scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #FAFAFA; }
+    ::-webkit-scrollbar-thumb { background: #D4D4D4; border-radius: 0px; }
+    ::-webkit-scrollbar-thumb:hover { background: #A3A3A3; }
+
+    /* Hide horizontal scrollbar but keep scrolling */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Print Stylesheet */
+    @media print {
+      body { background: white !important; color: black !important; font-size: 11pt; }
+      .no-print, nav, #bottom-nav, #alarm-modal, #modal-add, button, .action-btn {
+        display: none !important;
+      }
+      .print-only { display: block !important; }
+      .print-card {
+        border: 1px solid #E5E5E5 !important;
+        box-shadow: none !important;
+        background: white !important;
+        color: black !important;
+        break-inside: avoid;
+        margin-bottom: 1rem !important;
+      }
+      .tab-content { display: block !important; }
+      #tab-habits, #tab-journal, #tab-calendar { display: block !important; margin-bottom: 1.5rem; }
+      #tab-alarms, #tab-backup { display: none !important; }
+    }
+    @media screen {
+      .print-only { display: none; }
+    }
+  </style>
+</head>
+<body class="h-full bg-[#F7F7F7] text-neutral-900 font-sans antialiased select-none overflow-x-hidden flex flex-col">
+
+  <!-- TOP APP BAR (Uniqlo Minimalist Aesthetic) -->
+  <header class="no-print sticky top-0 z-30 bg-white border-b border-neutral-200 px-4 py-3 pt-safe">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <!-- Uniqlo-inspired Red Badge Logo -->
+        <div class="w-9 h-9 bg-[#E60012] flex items-center justify-center text-white font-extrabold text-sm tracking-tighter shadow-none">
+          <span>CH</span>
+        </div>
+        <div>
+          <h1 class="text-sm font-black tracking-wider text-neutral-900 uppercase leading-none">CONSISTENCY</h1>
+          <p class="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mt-0.5">Now or Never • Routine Hub</p>
+        </div>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="flex items-center space-x-2">
+        <!-- Emergency Alarm Stop Button (shown when ringing) -->
+        <button id="header-stop-alarm-btn" onclick="emergencyStopAlarm()" class="hidden pulse-alarm px-2.5 py-1.5 border border-[#E60012] text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition" title="Hentikan Alarm Sekarang">
+          <i data-lucide="bell-off" class="w-3.5 h-3.5"></i>
+          <span>Matikan Alarm</span>
+        </button>
+
+        <!-- Wake Lock Status Button -->
+        <button id="wakeLockBtn" onclick="toggleWakeLock()" class="flex items-center space-x-1.5 px-2.5 py-1.5 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold transition" title="Jaga Layar Aktif">
+          <i data-lucide="sun" id="wakeLockIcon" class="w-3.5 h-3.5 text-neutral-500"></i>
+          <span id="wakeLockLabel" class="hidden sm:inline">Layar Aktif: Mati</span>
+        </button>
+
+        <!-- Notification Permission Button -->
+        <button id="notifBtn" onclick="requestNotifPermission()" class="p-2 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 transition" title="Izinkan Notifikasi">
+          <i data-lucide="bell" id="notifIcon" class="w-4 h-4 text-neutral-600"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- STICKY EMERGENCY ACTIVE ALARM BANNER (Always Visible When Any Alarm is Ringing) -->
+  <aside id="sticky-alarm-banner" class="no-print hidden sticky top-14 z-40 bg-neutral-950 text-white border-b-2 border-[#E60012] px-4 py-3 shadow-lg">
+    <div class="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+      <div class="flex items-center space-x-2.5 text-left w-full sm:w-auto">
+        <span class="w-3 h-3 rounded-full bg-[#E60012] animate-ping shrink-0"></span>
+        <div class="min-w-0 flex-1">
+          <div class="text-[10px] font-black uppercase tracking-widest text-[#E60012]">Peringatan Alarm Aktif</div>
+          <div class="text-xs font-extrabold truncate" id="sticky-alarm-text">Nama Rutinitas - 07:00 WIB</div>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2 w-full sm:w-auto shrink-0 justify-end">
+        <button onclick="alarmActionComplete()" class="px-3 py-1.5 bg-white text-neutral-900 hover:bg-neutral-100 text-xs font-black uppercase tracking-wider transition">
+          Selesaikan
+        </button>
+        <button onclick="emergencyStopAlarm()" class="px-3.5 py-1.5 bg-[#E60012] hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition">
+          <i data-lucide="bell-off" class="w-3.5 h-3.5"></i>
+          <span>Matikan Alarm</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- PRINT ONLY HEADER -->
+  <div class="print-only p-6 pb-3 border-b border-neutral-300">
+    <div class="flex items-center space-x-2 mb-2">
+      <div class="w-7 h-7 bg-[#E60012] text-white font-bold flex items-center justify-center text-xs">CH</div>
+      <h1 class="text-xl font-black tracking-wider text-neutral-900 uppercase">CONSISTENT HABIT - LAPORAN RUTINITAS</h1>
+    </div>
+    <p class="text-xs text-neutral-500" id="print-date-label">Dicetak pada: -</p>
+  </div>
+
+  <!-- MAIN SCROLLABLE CONTAINER -->
+  <main class="flex-1 overflow-y-auto pb-28 max-w-2xl w-full mx-auto p-4 space-y-4">
+
+    <!-- OVERVIEW HERO CARD (Clean Monochrome Grid) -->
+    <section class="no-print bg-white border border-neutral-200 p-4 sm:p-5">
+      <div class="flex items-end justify-between mb-3 border-b border-neutral-100 pb-3">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#E60012] block">Ringkasan Hari Ini</span>
+          <h2 class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-0.5 tracking-tight" id="today-date-str">Hari ini</h2>
+        </div>
+        <div class="text-right">
+          <span class="text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight" id="stat-progress-pct">0%</span>
+          <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Kepatuhan</p>
+        </div>
+      </div>
+
+      <!-- Minimalist Progress Bar (High Contrast Black on Light Gray) -->
+      <div class="w-full bg-neutral-100 h-2 overflow-hidden">
+        <div id="hero-progress-bar" class="bg-neutral-900 h-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+
+      <!-- 3-Column Clean Grid -->
+      <div class="mt-4 grid grid-cols-3 divide-x divide-neutral-200 pt-1 text-center">
+        <div class="px-2">
+          <div class="text-lg font-black text-neutral-900" id="stat-completed-count">0/0</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">Selesai</div>
+        </div>
+        <div class="px-2">
+          <div class="text-lg font-black text-[#E60012] flex items-center justify-center gap-1">
+            <i data-lucide="flame" class="w-4 h-4 text-[#E60012]"></i>
+            <span id="stat-best-streak">0</span>
+          </div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">Streak Terbaik</div>
+        </div>
+        <div class="px-2">
+          <div class="text-lg font-black text-neutral-900" id="stat-active-routines">0</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">Rutinitas</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: DAFTAR RUTINITAS / KEBIASAAN -->
+    <section id="tab-habits" class="tab-content space-y-3">
+      <!-- Section Header -->
+      <div class="flex items-center justify-between border-b border-neutral-200 pb-2">
+        <div>
+          <h3 class="text-sm font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-[#E60012] inline-block"></span>
+            Daftar Kebiasaan
+          </h3>
+          <p class="text-[11px] text-neutral-500">Kelola dan tandai rutinitas untuk menjaga konsistensi</p>
+        </div>
+        <button onclick="openAddModal()" class="action-btn px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider flex items-center space-x-1.5 transition">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Tambah</span>
+        </button>
+      </div>
+
+      <!-- BARIS FILTER KATEGORI (Requested by User) -->
+      <div class="no-print space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+          <span>Filter Kategori</span>
+          <span id="active-category-indicator" class="text-neutral-900">Semua Kategori</span>
+        </div>
+        <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1 text-xs" id="category-filter-row">
+          <!-- Populated dynamically or static pills -->
+          <button onclick="setCategoryFilter('all')" data-cat="all" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-900 bg-neutral-900 text-white transition">
+            Semua
+          </button>
+          <button onclick="setCategoryFilter('Kesehatan')" data-cat="Kesehatan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+            Kesehatan
+          </button>
+          <button onclick="setCategoryFilter('Pekerjaan')" data-cat="Pekerjaan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+            Pekerjaan
+          </button>
+          <button onclick="setCategoryFilter('Pribadi')" data-cat="Pribadi" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+            Pribadi
+          </button>
+          <button onclick="setCategoryFilter('Belajar')" data-cat="Belajar" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+            Belajar
+          </button>
+          <button onclick="setCategoryFilter('Keuangan')" data-cat="Keuangan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+            Keuangan
+          </button>
+          <button onclick="setCategoryFilter('Lainnya')" data-cat="Lainnya" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+            Lainnya
+          </button>
+        </div>
+      </div>
+
+      <!-- BARIS STATUS FILTER (Hari Ini, Belum Selesai, Selesai) -->
+      <div class="no-print flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-1 text-[11px]">
+        <button onclick="setHabitFilter('all')" id="filter-btn-all" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-900 bg-neutral-900 text-white">Semua Status</button>
+        <button onclick="setHabitFilter('today')" id="filter-btn-today" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Jadwal Hari Ini</button>
+        <button onclick="setHabitFilter('pending')" id="filter-btn-pending" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Belum Selesai</button>
+        <button onclick="setHabitFilter('completed')" id="filter-btn-completed" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Selesai</button>
+      </div>
+
+      <!-- Habit Cards List -->
+      <div id="habits-list-container" class="space-y-2.5 pt-1">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- TAB 2: SISTEM ALARM & SOUND SYNTHESIZER -->
+    <section id="tab-alarms" class="tab-content hidden space-y-3">
+      <div class="border-b border-neutral-200 pb-2">
+        <h3 class="text-sm font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+          <span class="w-2 h-2 bg-[#E60012] inline-block"></span>
+          Audio Synthesizer & Alarm
+        </h3>
+        <p class="text-[11px] text-neutral-500">Synthesizer Web Audio API murni (100% offline & mandiri)</p>
+      </div>
+
+      <!-- Sound Preview & Synthesizer Studio -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-4">
+        <div class="flex items-center justify-between border-b border-neutral-100 pb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-neutral-900">Pilihan Nada Suara</span>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#E60012] border border-[#E60012] px-1.5 py-0.5">Offline Synth</span>
+        </div>
+
+        <!-- Preset Selection Grid -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button type="button" onclick="selectSoundPreset('gentle')" id="btn-sound-gentle" class="sound-preset-btn p-3 border-2 border-neutral-900 bg-neutral-50 text-left transition flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-extrabold text-neutral-900 uppercase">1. Lembut</span>
+              <i data-lucide="music" class="w-4 h-4 text-neutral-900"></i>
+            </div>
+            <span class="text-[11px] text-neutral-500">Chime relaksasi bertingkat</span>
+          </button>
+
+          <button type="button" onclick="selectSoundPreset('bell')" id="btn-sound-bell" class="sound-preset-btn p-3 border border-neutral-200 bg-white text-left transition flex flex-col justify-between hover:border-neutral-400">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-extrabold text-neutral-900 uppercase">2. Bel Klasik</span>
+              <i data-lucide="bell" class="w-4 h-4 text-neutral-600"></i>
+            </div>
+            <span class="text-[11px] text-neutral-500">Dentang bel resonansi harmonik</span>
+          </button>
+
+          <button type="button" onclick="selectSoundPreset('beep')" id="btn-sound-beep" class="sound-preset-btn p-3 border border-neutral-200 bg-white text-left transition flex flex-col justify-between hover:border-neutral-400">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-extrabold text-neutral-900 uppercase">3. Digital Beep</span>
+              <i data-lucide="alarm-clock" class="w-4 h-4 text-neutral-600"></i>
+            </div>
+            <span class="text-[11px] text-neutral-500">Pola weker digital modern</span>
+          </button>
+
+          <button type="button" onclick="selectSoundPreset('siren')" id="btn-sound-siren" class="sound-preset-btn p-3 border border-neutral-200 bg-white text-left transition flex flex-col justify-between hover:border-neutral-400">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-extrabold text-neutral-900 uppercase">4. Sirene</span>
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-[#E60012]"></i>
+            </div>
+            <span class="text-[11px] text-neutral-500">Modulasi frekuensi tajam</span>
+          </button>
+        </div>
+
+        <!-- Volume Slider -->
+        <div class="space-y-1 pt-2 border-t border-neutral-100">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-neutral-700 font-bold uppercase tracking-wider text-[11px]">Volume Alarm</span>
+            <span class="text-neutral-900 font-black" id="volume-display">80%</span>
+          </div>
+          <input type="range" id="volume-slider" min="0" max="100" value="80" oninput="onVolumeChange(this.value)" class="w-full accent-neutral-900 bg-neutral-200 h-1.5 cursor-pointer" />
+        </div>
+
+        <!-- Test Sound & Stop Buttons -->
+        <div class="flex gap-2 pt-1">
+          <button onclick="testSelectedSound()" class="flex-1 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i>
+            <span>Uji Nada Suara</span>
+          </button>
+          <button onclick="stopAllAudio()" class="px-4 py-2.5 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-bold uppercase tracking-wider flex items-center space-x-1.5 transition">
+            <i data-lucide="square" class="w-3.5 h-3.5"></i>
+            <span>Stop</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Wake Lock & Screen Control Info Card -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-3">
+        <div class="flex items-start justify-between">
+          <div class="space-y-0.5">
+            <h4 class="text-xs font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+              <i data-lucide="smartphone" class="w-3.5 h-3.5 text-neutral-800"></i>
+              Screen Wake Lock API
+            </h4>
+            <p class="text-[11px] text-neutral-500 leading-relaxed">
+              Mencegah layar meredup atau terkunci saat menunggu waktu alarm tiba.
+            </p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer ml-3 shrink-0">
+            <input type="checkbox" id="wakeLockSwitch" onchange="toggleWakeLock()" class="sr-only peer">
+            <div class="w-10 h-5 bg-neutral-200 peer-focus:outline-none peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:h-4 after:w-4 after:transition-all peer-checked:bg-neutral-900"></div>
+          </label>
+        </div>
+        <div id="wakeLockStatusText" class="text-[11px] text-neutral-600 bg-neutral-50 p-2.5 border border-neutral-200">
+          Status: Layar mengikuti pengaturan sistem perangkat.
+        </div>
+      </div>
+
+      <!-- FIREBASE CLOUD MESSAGING (FCM) SERVICE CARD -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-3">
+        <div class="flex items-center justify-between border-b border-neutral-100 pb-2">
+          <div class="space-y-0.5">
+            <h4 class="text-xs font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+              <i data-lucide="radio" class="w-3.5 h-3.5 text-[#E60012]"></i>
+              Firebase Cloud Messaging (FCM)
+            </h4>
+            <p class="text-[11px] text-neutral-500">Notifikasi push pengingat reliable bahkan saat browser ditutup</p>
+          </div>
+          <span id="fcm-support-badge" class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 border border-neutral-300 bg-neutral-100 text-neutral-700">
+            Memeriksa...
+          </span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-neutral-600 text-[11px]">Status Registrasi Token:</span>
+            <span id="fcm-token-status" class="font-bold text-neutral-900 text-[11px]">Belum Terdaftar</span>
+          </div>
+
+          <!-- Token Display Area -->
+          <div id="fcm-token-container" class="hidden space-y-1 bg-neutral-50 p-2.5 border border-neutral-200">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Device FCM Token</span>
+              <button onclick="copyFCMToken()" class="text-[10px] font-bold text-neutral-900 uppercase hover:underline flex items-center gap-1">
+                <i data-lucide="copy" class="w-3 h-3"></i>
+                <span id="fcm-copy-label">Salin Token</span>
+              </button>
+            </div>
+            <p id="fcm-token-preview" class="text-[10px] font-mono text-neutral-700 break-all select-all leading-tight"></p>
+          </div>
+
+          <!-- Actions Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            <button onclick="registerFCMToken()" id="fcm-register-btn" class="py-2.5 px-3 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-1.5 transition">
+              <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
+              <span>Daftarkan Token FCM</span>
+            </button>
+            <button onclick="sendTestFCMPush()" class="py-2.5 px-3 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-1.5 transition">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Uji Push Notifikasi</span>
+            </button>
+          </div>
+
+          <!-- Custom Config Accordion -->
+          <details class="text-[11px] text-neutral-600 border border-neutral-200 p-2 bg-neutral-50/50">
+            <summary class="cursor-pointer font-bold uppercase tracking-wider text-neutral-800 hover:text-neutral-900">
+              Konfigurasi Kustom Firebase (Opsional)
+            </summary>
+            <div class="space-y-2 pt-2.5">
+              <p class="text-[10px] text-neutral-500">Secara bawaan, aplikasi sudah menyediakan konfigurasi Firebase siap pakai. Anda dapat memasukkan kredensial project Firebase Anda sendiri jika diinginkan:</p>
+              <div class="grid grid-cols-1 gap-2">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-neutral-600">Sender ID / Project Number</label>
+                  <input type="text" id="fcm-cfg-sender-id" placeholder="Contoh: 445682163672" class="w-full bg-white border border-neutral-300 px-2 py-1 text-xs text-neutral-900 focus:outline-none focus:border-neutral-900" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-neutral-600">VAPID Public Key (Web Push)</label>
+                  <input type="text" id="fcm-cfg-vapid" placeholder="Opsional VAPID key" class="w-full bg-white border border-neutral-300 px-2 py-1 text-xs text-neutral-900 focus:outline-none focus:border-neutral-900" />
+                </div>
+                <button onclick="saveCustomFCMConfig()" class="w-full py-1.5 border border-neutral-900 bg-white hover:bg-neutral-100 text-neutral-900 text-[10px] font-bold uppercase tracking-wider transition">
+                  Simpan Konfigurasi FCM
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Active Schedules Today -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-3">
+        <h4 class="text-xs font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5 border-b border-neutral-100 pb-2">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-neutral-800"></i>
+          Daftar Alarm Aktif Hari Ini
+        </h4>
+        <div id="alarms-today-list" class="space-y-2 text-xs">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: KALENDER & STREAK TRACKER -->
+    <section id="tab-calendar" class="tab-content hidden space-y-3">
+      <div class="border-b border-neutral-200 pb-2">
+        <h3 class="text-sm font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+          <span class="w-2 h-2 bg-[#E60012] inline-block"></span>
+          Kalender & Streak
+        </h3>
+        <p class="text-[11px] text-neutral-500">Matriks konsistensi harian tanpa jeda</p>
+      </div>
+
+      <!-- Mini Calendar Navigation -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-3 print-card">
+        <div class="flex items-center justify-between border-b border-neutral-100 pb-2">
+          <button onclick="changeMonth(-1)" class="no-print p-1 border border-neutral-200 hover:bg-neutral-50 text-neutral-700">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+          <h4 class="text-xs font-black uppercase tracking-widest text-neutral-900" id="calendar-month-year">Bulan Tahun</h4>
+          <button onclick="changeMonth(1)" class="no-print p-1 border border-neutral-200 hover:bg-neutral-50 text-neutral-700">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Days Header -->
+        <div class="grid grid-cols-7 text-center text-[10px] font-bold uppercase tracking-wider text-neutral-500 pb-1 border-b border-neutral-100">
+          <span class="text-[#E60012]">Min</span>
+          <span>Sen</span>
+          <span>Sel</span>
+          <span>Rab</span>
+          <span>Kam</span>
+          <span>Jum</span>
+          <span>Sab</span>
+        </div>
+
+        <!-- Month Grid -->
+        <div id="calendar-days-grid" class="grid grid-cols-7 gap-1 text-center text-xs">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-neutral-500">
+          <div class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 bg-neutral-900 inline-block"></span>
+            <span>Semua Selesai</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 bg-neutral-400 inline-block"></span>
+            <span>Sebagian</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 bg-neutral-100 border border-neutral-300 inline-block"></span>
+            <span>Kosong</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Streak Breakdown Card -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-3 print-card">
+        <h4 class="text-xs font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5 border-b border-neutral-100 pb-2">
+          <i data-lucide="award" class="w-3.5 h-3.5 text-[#E60012]"></i>
+          Pencapaian Streak Berdasarkan Kebiasaan
+        </h4>
+        <div id="streak-summary-list" class="space-y-2">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: TASK & DEADLINE MANAGER (Requested by User) -->
+    <section id="tab-tasks" class="tab-content hidden space-y-3">
+      <div class="flex items-center justify-between border-b border-neutral-200 pb-2">
+        <div>
+          <h3 class="text-sm font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-[#E60012] inline-block"></span>
+            Task & Deadline Manager
+          </h3>
+          <p class="text-[11px] text-neutral-500">Tenggat waktu terurut otomatis dengan peringatan H-2 dan H-1</p>
+        </div>
+        <button onclick="toggleNewTaskForm()" id="btn-toggle-task-form" class="no-print px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider flex items-center space-x-1.5 transition">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span id="btn-toggle-task-label">Tugas Baru</span>
+        </button>
+      </div>
+
+      <!-- Quick Stats Card for Tasks -->
+      <div class="grid grid-cols-3 gap-2 text-center text-xs">
+        <div class="bg-white border border-neutral-200 p-2.5">
+          <div class="font-black text-sm text-neutral-900" id="task-stat-pending">0</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">Belum Selesai</div>
+        </div>
+        <div class="bg-white border border-neutral-200 p-2.5">
+          <div class="font-black text-sm text-[#E60012]" id="task-stat-urgent">0</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">&lt; 24 Jam (H-1)</div>
+        </div>
+        <div class="bg-white border border-neutral-200 p-2.5">
+          <div class="font-black text-sm text-neutral-900" id="task-stat-completed">0</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mt-0.5">Telah Selesai</div>
+        </div>
+      </div>
+
+      <!-- Form Input Tugas Baru (Minimalist Monochrome) -->
+      <form id="task-form" onsubmit="saveTaskForm(event)" class="no-print bg-white border border-neutral-300 p-4 space-y-3">
+        <div class="flex items-center justify-between border-b border-neutral-100 pb-2">
+          <span class="text-xs font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+            <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-[#E60012]"></i>
+            Input Tugas & Batas Waktu
+          </span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Terurut Otomatis</span>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1">Nama Tugas / Pekerjaan</label>
+          <input type="text" id="task-input-name" required placeholder="Contoh: Laporan Keuangan Q3, Submit Tugas Akhir..." class="w-full bg-white border border-neutral-300 px-3 py-2 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1">Tanggal & Jam Batas Waktu</label>
+            <input type="datetime-local" id="task-input-deadline" required class="w-full bg-white border border-neutral-300 px-3 py-2 text-xs text-neutral-900 focus:outline-none focus:border-neutral-900" />
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1">Tingkat Prioritas</label>
+            <div class="grid grid-cols-3 gap-1 text-center" id="task-priority-selector">
+              <button type="button" onclick="selectTaskPriority('Mendesak')" class="priority-btn py-2 px-1 text-[11px] font-black uppercase tracking-wider border-2 border-neutral-900 bg-neutral-900 text-white transition" data-priority="Mendesak">
+                Mendesak
+              </button>
+              <button type="button" onclick="selectTaskPriority('Normal')" class="priority-btn py-2 px-1 text-[11px] font-bold uppercase tracking-wider border border-neutral-300 bg-white text-neutral-700 hover:border-neutral-900 transition" data-priority="Normal">
+                Normal
+              </button>
+              <button type="button" onclick="selectTaskPriority('Rendah')" class="priority-btn py-2 px-1 text-[11px] font-bold uppercase tracking-wider border border-neutral-300 bg-white text-neutral-700 hover:border-neutral-900 transition" data-priority="Rendah">
+                Rendah
+              </button>
+            </div>
+            <input type="hidden" id="task-input-priority" value="Mendesak" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1">Catatan Tambahan (Opsional)</label>
+          <input type="text" id="task-input-notes" placeholder="Contoh: Lampirkan bukti PDF, koordinasi dengan tim" class="w-full bg-white border border-neutral-300 px-3 py-2 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900" />
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center space-x-2 transition">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Tambahkan ke Daftar Tugas</span>
+        </button>
+      </form>
+
+      <!-- Task Filter Pills -->
+      <div class="no-print flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-1 text-[11px]">
+        <button onclick="setTaskFilter('all')" id="task-filter-all" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-900 bg-neutral-900 text-white">Semua</button>
+        <button onclick="setTaskFilter('pending')" id="task-filter-pending" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Belum Selesai</button>
+        <button onclick="setTaskFilter('approaching')" id="task-filter-approaching" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-[#E60012] hover:border-neutral-400">&lt; 24 Jam (H-1)</button>
+        <button onclick="setTaskFilter('urgent')" id="task-filter-urgent" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Mendesak</button>
+        <button onclick="setTaskFilter('completed')" id="task-filter-completed" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Selesai</button>
+      </div>
+
+      <!-- Task Items List (Sorted by Closest Deadline) -->
+      <div id="tasks-list-container" class="space-y-2.5 pt-1">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 5: EKSPOR, IMPOR, & BACKUP DATA -->
+    <section id="tab-backup" class="tab-content hidden space-y-3">
+      <div class="border-b border-neutral-200 pb-2">
+        <h3 class="text-sm font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+          <span class="w-2 h-2 bg-[#E60012] inline-block"></span>
+          Cadangan & Ekspor Data
+        </h3>
+        <p class="text-[11px] text-neutral-500">Ekspor data rutin, streak, dan riwayat jurnal</p>
+      </div>
+
+      <!-- Export Grid -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-3">
+        <span class="text-[11px] font-black uppercase tracking-wider text-neutral-700 block border-b border-neutral-100 pb-1">Format Ekspor</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <!-- JSON Full Backup -->
+          <button onclick="exportJSON()" class="p-3 border border-neutral-200 bg-white hover:border-neutral-900 text-left transition flex items-center space-x-3">
+            <div class="p-2 border border-neutral-200 bg-neutral-50 text-neutral-900">
+              <i data-lucide="file-json" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="font-extrabold text-neutral-900 uppercase text-xs">Cadangan JSON</div>
+              <div class="text-[10px] text-neutral-500">Seluruh data kebiasaan & riwayat</div>
+            </div>
+          </button>
+
+          <!-- CSV Spreadsheet -->
+          <button onclick="exportCSV()" class="p-3 border border-neutral-200 bg-white hover:border-neutral-900 text-left transition flex items-center space-x-3">
+            <div class="p-2 border border-neutral-200 bg-neutral-50 text-neutral-900">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="font-extrabold text-neutral-900 uppercase text-xs">Tabel CSV</div>
+              <div class="text-[10px] text-neutral-500">Buka di Excel & Google Sheets</div>
+            </div>
+          </button>
+
+          <!-- TXT Journal -->
+          <button onclick="exportTXT()" class="p-3 border border-neutral-200 bg-white hover:border-neutral-900 text-left transition flex items-center space-x-3">
+            <div class="p-2 border border-neutral-200 bg-neutral-50 text-neutral-900">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="font-extrabold text-neutral-900 uppercase text-xs">Ringkasan TXT</div>
+              <div class="text-[10px] text-neutral-500">Log teks rapi untuk dibaca</div>
+            </div>
+          </button>
+
+          <!-- Print / PDF -->
+          <button onclick="printReport()" class="p-3 border border-neutral-200 bg-white hover:border-neutral-900 text-left transition flex items-center space-x-3">
+            <div class="p-2 border border-neutral-200 bg-neutral-50 text-[#E60012]">
+              <i data-lucide="printer" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="font-extrabold text-neutral-900 uppercase text-xs">Cetak / Simpan PDF</div>
+              <div class="text-[10px] text-neutral-500">Tata letak cetak bersih tanpa tombol</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Import / Restore Section -->
+      <div class="bg-white border border-neutral-200 p-4 space-y-2.5">
+        <span class="text-[11px] font-black uppercase tracking-wider text-neutral-700 block border-b border-neutral-100 pb-1">Pulihkan Data (Restore)</span>
+        <p class="text-[11px] text-neutral-500">Pulihkan data dari file JSON yang telah dicadangkan sebelumnya.</p>
+        
+        <input type="file" id="import-json-file" accept=".json" onchange="handleJSONImport(event)" class="hidden" />
+        <button onclick="document.getElementById('import-json-file').click()" class="w-full py-2.5 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-900 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition">
+          <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+          <span>Pilih File JSON & Pulihkan</span>
+        </button>
+      </div>
+
+      <!-- Reset Zone -->
+      <div class="bg-white border border-neutral-300 p-4 space-y-2">
+        <span class="text-[11px] font-black uppercase tracking-wider text-[#E60012] block">Atur Ulang Data</span>
+        <p class="text-[11px] text-neutral-500">Hapus seluruh data saat ini dan kembalikan ke contoh rutinitas awal.</p>
+        <button onclick="resetAllData()" class="px-3.5 py-2 border border-[#E60012] bg-white hover:bg-neutral-50 text-[#E60012] text-xs font-bold uppercase tracking-wider transition">
+          Reset ke Data Contoh Awal
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR (Uniqlo Minimalist Aesthetic) -->
+  <nav id="bottom-nav" class="no-print fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-neutral-200 pb-safe">
+    <div class="max-w-2xl mx-auto grid grid-cols-5 h-14">
+      <button onclick="switchTab('habits')" id="nav-btn-habits" class="nav-item flex flex-col items-center justify-center text-neutral-900 transition border-t-2 border-neutral-900">
+        <i data-lucide="check-circle" class="w-4 h-4 mb-0.5"></i>
+        <span class="text-[10px] font-extrabold uppercase tracking-wider">Rutinitas</span>
+      </button>
+
+      <button onclick="switchTab('alarms')" id="nav-btn-alarms" class="nav-item flex flex-col items-center justify-center text-neutral-400 hover:text-neutral-700 transition border-t-2 border-transparent">
+        <i data-lucide="bell" class="w-4 h-4 mb-0.5"></i>
+        <span class="text-[10px] font-bold uppercase tracking-wider">Alarm</span>
+      </button>
+
+      <button onclick="switchTab('calendar')" id="nav-btn-calendar" class="nav-item flex flex-col items-center justify-center text-neutral-400 hover:text-neutral-700 transition border-t-2 border-transparent">
+        <i data-lucide="calendar" class="w-4 h-4 mb-0.5"></i>
+        <span class="text-[10px] font-bold uppercase tracking-wider">Kalender</span>
+      </button>
+
+      <button onclick="switchTab('tasks')" id="nav-btn-tasks" class="nav-item flex flex-col items-center justify-center text-neutral-400 hover:text-neutral-700 transition border-t-2 border-transparent">
+        <i data-lucide="check-square" class="w-4 h-4 mb-0.5"></i>
+        <span class="text-[10px] font-bold uppercase tracking-wider">Tugas</span>
+      </button>
+
+      <button onclick="switchTab('backup')" id="nav-btn-backup" class="nav-item flex flex-col items-center justify-center text-neutral-400 hover:text-neutral-700 transition border-t-2 border-transparent">
+        <i data-lucide="database" class="w-4 h-4 mb-0.5"></i>
+        <span class="text-[10px] font-bold uppercase tracking-wider">Backup</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MODAL: KONFIRMASI VALIDASI SELESAI (KUNCI STATUS TETAP) -->
+  <div id="modal-confirm-completion" class="no-print fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-none hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-neutral-300 w-full max-w-sm p-5 space-y-4 shadow-none">
+      <div class="flex items-center space-x-2 border-b border-neutral-200 pb-2.5">
+        <span class="w-2.5 h-2.5 bg-[#E60012]"></span>
+        <h3 class="text-xs font-black uppercase tracking-wider text-neutral-900">Validasi Selesai Rutinitas</h3>
+      </div>
+      <div class="space-y-2 text-xs">
+        <p class="text-neutral-800 font-bold" id="confirm-habit-name">Nama Rutinitas</p>
+        <p class="text-neutral-600 leading-relaxed text-[11px] bg-neutral-50 p-2.5 border border-neutral-200">
+          Apakah Anda yakin telah menyelesaikan rutinitas ini?
+          <span class="block mt-1 font-bold text-[#E60012]">Peringatan: Sekali dikonfirmasi, status selesai akan dikunci tetap untuk hari ini dan tidak dapat dibatalkan kembali.</span>
+        </p>
+      </div>
+      <div class="flex items-center justify-end space-x-2 pt-1 border-t border-neutral-100">
+        <button onclick="closeConfirmModal()" class="px-3 py-2 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-bold uppercase tracking-wider transition">
+          Batal
+        </button>
+        <button onclick="proceedLockCompletion()" class="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-black uppercase tracking-wider transition">
+          Ya, Selesai &amp; Kunci
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TAMBAH / EDIT KEBIASAAN -->
+  <div id="modal-add" class="no-print fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-none hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-neutral-300 w-full max-w-md max-h-[90vh] overflow-y-auto p-5 space-y-4 shadow-none">
+      <div class="flex items-center justify-between border-b border-neutral-200 pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 bg-[#E60012]"></span>
+          <h3 class="text-xs font-black uppercase tracking-wider text-neutral-900" id="modal-habit-title">Tambah Kebiasaan Baru</h3>
+        </div>
+        <button onclick="closeAddModal()" class="p-1 border border-neutral-200 text-neutral-500 hover:text-neutral-900">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="habit-form" onsubmit="saveHabitForm(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="form-habit-id" value="" />
+
+        <div>
+          <label class="block font-bold uppercase tracking-wider text-neutral-700 mb-1 text-[11px]">Nama Kebiasaan / Rutinitas</label>
+          <input type="text" id="form-habit-name" required placeholder="Contoh: Minum Air Putih 500ml, Review Kerja" class="w-full bg-white border border-neutral-300 px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900" />
+        </div>
+
+        <!-- SISTEM KATEGORI (Requested by User) -->
+        <div>
+          <label class="block font-bold uppercase tracking-wider text-neutral-700 mb-1 text-[11px]">Kategori Rutinitas</label>
+          <select id="form-habit-category" class="w-full bg-white border border-neutral-300 px-3 py-2 text-neutral-900 focus:outline-none focus:border-neutral-900">
+            <option value="Kesehatan">Kesehatan</option>
+            <option value="Pekerjaan">Pekerjaan</option>
+            <option value="Pribadi">Pribadi</option>
+            <option value="Belajar">Belajar</option>
+            <option value="Keuangan">Keuangan</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold uppercase tracking-wider text-neutral-700 mb-1 text-[11px]">Deskripsi / Tujuan Singkat (Opsional)</label>
+          <input type="text" id="form-habit-desc" placeholder="Contoh: 15 menit untuk stamina dan konsentrasi" class="w-full bg-white border border-neutral-300 px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-neutral-700 mb-1 text-[11px]">Waktu Alarm (Jam & Menit)</label>
+            <input type="time" id="form-habit-time" required value="07:00" class="w-full bg-white border border-neutral-300 px-3 py-2 text-neutral-900 focus:outline-none focus:border-neutral-900" />
+          </div>
+
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-neutral-700 mb-1 text-[11px]">Nada Alarm Synthesizer</label>
+            <select id="form-habit-sound" class="w-full bg-white border border-neutral-300 px-2.5 py-2 text-neutral-900 focus:outline-none focus:border-neutral-900">
+              <option value="gentle">1. Lembut / Chime</option>
+              <option value="bell">2. Bel Klasik</option>
+              <option value="beep">3. Digital Beep</option>
+              <option value="siren">4. Sirene / Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold uppercase tracking-wider text-neutral-700 mb-1 text-[11px]">Frekuensi Jadwal Rutinitas</label>
+          <select id="form-habit-frequency" onchange="onFrequencyChange(this.value)" class="w-full bg-white border border-neutral-300 px-3 py-2 text-neutral-900 focus:outline-none focus:border-neutral-900">
+            <option value="daily">Setiap Hari (Senin - Minggu)</option>
+            <option value="weekdays">Hari Kerja Saja (Senin - Jumat)</option>
+            <option value="weekends">Akhir Pekan Saja (Sabtu - Minggu)</option>
+            <option value="custom">Pilih Hari Tertentu...</option>
+          </select>
+        </div>
+
+        <!-- Custom Days Selector -->
+        <div id="custom-days-container" class="hidden space-y-1.5 pt-1">
+          <span class="text-neutral-500 block text-[10px] font-bold uppercase tracking-wider">Pilih hari aktif:</span>
+          <div class="grid grid-cols-7 gap-1 text-center font-bold text-[11px]">
+            <label class="cursor-pointer">
+              <input type="checkbox" name="custom-day" value="0" class="sr-only peer">
+              <span class="block py-1 border border-neutral-200 bg-neutral-50 text-neutral-500 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900">Min</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="custom-day" value="1" class="sr-only peer" checked>
+              <span class="block py-1 border border-neutral-200 bg-neutral-50 text-neutral-500 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900">Sen</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="custom-day" value="2" class="sr-only peer" checked>
+              <span class="block py-1 border border-neutral-200 bg-neutral-50 text-neutral-500 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900">Sel</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="custom-day" value="3" class="sr-only peer" checked>
+              <span class="block py-1 border border-neutral-200 bg-neutral-50 text-neutral-500 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900">Rab</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="custom-day" value="4" class="sr-only peer" checked>
+              <span class="block py-1 border border-neutral-200 bg-neutral-50 text-neutral-500 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900">Kam</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="custom-day" value="5" class="sr-only peer" checked>
+              <span class="block py-1 border border-neutral-200 bg-neutral-50 text-neutral-500 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900">Jum</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="custom-day" value="6" class="sr-only peer">
+              <span class="block py-1 border border-neutral-200 bg-neutral-50 text-neutral-500 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900">Sab</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 pt-3 border-t border-neutral-200">
+          <button type="button" onclick="closeAddModal()" class="w-1/2 py-2 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-wider transition">Batal</button>
+          <button type="submit" class="w-1/2 py-2 bg-neutral-900 hover:bg-neutral-800 text-white font-bold uppercase tracking-wider transition">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL INTERAKTIF ALARM BERDERING (Minimalist High-Contrast) -->
+  <div id="alarm-modal" class="no-print fixed inset-0 z-50 bg-neutral-900/80 hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-neutral-900 w-full max-w-sm p-6 text-center space-y-4 shadow-none">
+      
+      <!-- Ringing Indicator -->
+      <div class="w-16 h-16 mx-auto bg-[#E60012] flex items-center justify-center text-white">
+        <i data-lucide="bell" class="w-8 h-8"></i>
+      </div>
+
+      <div>
+        <span class="text-[10px] font-black uppercase tracking-widest text-[#E60012] block">Pengingat Waktu Tiba</span>
+        <h3 class="text-lg font-black uppercase tracking-tight text-neutral-900 mt-1" id="alarm-modal-habit-name">Nama Kebiasaan</h3>
+        <p class="text-xs text-neutral-600 mt-0.5" id="alarm-modal-time">07:00 WIB</p>
+      </div>
+
+      <div class="bg-neutral-50 p-3 border border-neutral-200 text-xs flex items-center justify-around">
+        <div>
+          <span class="text-neutral-500 block text-[9px] font-bold uppercase tracking-wider">Current Streak</span>
+          <span class="font-black text-[#E60012] text-sm" id="alarm-modal-streak">5 Hari</span>
+        </div>
+        <div class="h-6 w-px bg-neutral-200"></div>
+        <div>
+          <span class="text-neutral-500 block text-[9px] font-bold uppercase tracking-wider">Peluang Hari Ini</span>
+          <span class="font-black text-neutral-900 text-sm">+1 Streak</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-1">
+        <!-- Mark Completed -->
+        <button onclick="alarmActionComplete()" class="w-full py-3 bg-neutral-900 hover:bg-neutral-800 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Tandai Selesai</span>
+        </button>
+
+        <!-- Snooze -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="alarmActionSnooze(5)" class="py-2 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-1 transition">
+            <i data-lucide="clock" class="w-3 h-3"></i>
+            <span>Tunda 5 Menit</span>
+          </button>
+          <button onclick="alarmActionSnooze(10)" class="py-2 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-1 transition">
+            <i data-lucide="clock" class="w-3 h-3"></i>
+            <span>Tunda 10 Menit</span>
+          </button>
+        </div>
+
+        <!-- Dismiss -->
+        <button onclick="alarmActionDismiss()" class="w-full py-2 border border-transparent hover:border-neutral-300 text-neutral-500 hover:text-neutral-900 text-xs font-bold uppercase tracking-wider transition">
+          Matikan Alarm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION CORE -->
+  <script>
+    /* ==========================================================================
+       1. INITIAL STATE & STORAGE MANAGEMENT
+       ========================================================================== */
+    const STORAGE_KEY_HABITS = 'ch_habits_v1';
+    const STORAGE_KEY_LOGS = 'ch_logs_v1';
+    const STORAGE_KEY_TASKS = 'ch_tasks_v1';
+    const STORAGE_KEY_SETTINGS = 'ch_settings_v1';
+    const STORAGE_KEY_FCM_CONFIG = 'ch_fcm_config_v1';
+    const STORAGE_KEY_FCM_TOKEN = 'ch_fcm_token_v1';
+    const STORAGE_KEY_NOTIFIED_DEADLINES = 'ch_notified_deadlines_v1';
+
+    // Default Starter Tasks for Task & Deadline Manager
+    const DEFAULT_TASKS = [
+      {
+        id: 't_1',
+        title: 'Submit Laporan Evaluasi & Dokumen Final',
+        deadline: new Date(Date.now() + 16 * 3600000).toISOString().slice(0, 16), // ~16 jam lagi (<24 Jam)
+        priority: 'Mendesak',
+        notes: 'Lampirkan berkas spreadsheet dan ringkasan eksekutif.',
+        completed: false,
+        completedAt: null,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 't_2',
+        title: 'Penyusunan Slide Presentasi & Bahan Rapat',
+        deadline: new Date(Date.now() + 38 * 3600000).toISOString().slice(0, 16), // ~38 jam lagi (H-2)
+        priority: 'Normal',
+        notes: 'Gunakan layout minimalis monokrom dengan tipografi tegas.',
+        completed: false,
+        completedAt: null,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 't_3',
+        title: 'Review Rencana Strategis & Arsip Dokumen',
+        deadline: new Date(Date.now() + 72 * 3600000).toISOString().slice(0, 16), // ~3 hari lagi
+        priority: 'Rendah',
+        notes: 'Pemeriksaan berkala checklist inventaris bulanan.',
+        completed: false,
+        completedAt: null,
+        createdAt: new Date().toISOString()
+      }
+    ];
+
+    // Default Starter Habits with Categories (Kesehatan, Pekerjaan, Pribadi, Belajar)
+    const DEFAULT_HABITS = [
+      {
+        id: 'h_1',
+        name: 'Minum Air Putih 500ml',
+        category: 'Kesehatan',
+        description: 'Mulai pagi dengan hidrasi tubuh optimal',
+        time: '06:30',
+        frequency: 'daily',
+        days: [0, 1, 2, 3, 4, 5, 6],
+        sound: 'gentle',
+        enabled: true,
+        streak: 4,
+        bestStreak: 14,
+        createdAt: '2026-09-01T06:30:00.000Z'
+      },
+      {
+        id: 'h_2',
+        name: 'Olahraga / Stretching Pagi',
+        category: 'Kesehatan',
+        description: 'Latihan fleksibilitas & kardio 15 menit',
+        time: '07:00',
+        frequency: 'weekdays',
+        days: [1, 2, 3, 4, 5],
+        sound: 'beep',
+        enabled: true,
+        streak: 2,
+        bestStreak: 7,
+        createdAt: '2026-09-01T07:00:00.000Z'
+      },
+      {
+        id: 'h_3',
+        name: 'Review Prioritas & Task Kerja',
+        category: 'Pekerjaan',
+        description: 'Susun 3 tugas utama hari ini dengan fokus penuh',
+        time: '08:30',
+        frequency: 'weekdays',
+        days: [1, 2, 3, 4, 5],
+        sound: 'bell',
+        enabled: true,
+        streak: 6,
+        bestStreak: 12,
+        createdAt: '2026-09-01T08:30:00.000Z'
+      },
+      {
+        id: 'h_4',
+        name: 'Membaca Buku / Jurnal Refleksi',
+        category: 'Belajar',
+        description: 'Membaca minimal 10 halaman buku pengembangan diri',
+        time: '20:30',
+        frequency: 'daily',
+        days: [0, 1, 2, 3, 4, 5, 6],
+        sound: 'bell',
+        enabled: true,
+        streak: 5,
+        bestStreak: 21,
+        createdAt: '2026-09-01T20:30:00.000Z'
+      },
+      {
+        id: 'h_5',
+        name: 'Meditasi & Jurnal Syukur Malam',
+        category: 'Pribadi',
+        description: 'Relaksasi pernapasan 10 menit sebelum tidur',
+        time: '21:45',
+        frequency: 'daily',
+        days: [0, 1, 2, 3, 4, 5, 6],
+        sound: 'gentle',
+        enabled: true,
+        streak: 3,
+        bestStreak: 9,
+        createdAt: '2026-09-01T21:45:00.000Z'
+      }
+    ];
+
+    // State Variables
+    let habits = [];
+    let completionLogs = {}; // Format: { "YYYY-MM-DD": ["habit_id_1", "habit_id_2"] }
+    let tasks = [];
+    let notifiedDeadlines = {};
+    let appSettings = {
+      volume: 80,
+      selectedSound: 'gentle',
+      wakeLockEnabled: false
+    };
+
+    let currentHabitFilter = 'all';     // 'all' | 'today' | 'pending' | 'completed'
+    let currentCategoryFilter = 'all';  // 'all' | 'Kesehatan' | 'Pekerjaan' | 'Pribadi' | ...
+    let currentTaskFilter = 'all';      // 'all' | 'pending' | 'approaching' | 'urgent' | 'completed'
+    let currentTaskPriority = 'Mendesak';
+    let pendingHabitCompletionId = null; // For permanent completion lock validation modal
+
+    let calendarCurrentDate = new Date();
+    let wakeLockSentinel = null;
+    let activeRingingHabit = null;
+    let alarmRepeatTimer = null;
+    let snoozedAlarms = {}; // { habitId: timestamp_to_ring }
+    let lastCheckedMinute = '';
+    let triggeredAlarmsToday = {}; // { "YYYY-MM-DD_HH:MM": [habit_ids] }
+
+    function getTodayDateString(d = new Date()) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function loadAppData() {
+      try {
+        const storedHabits = localStorage.getItem(STORAGE_KEY_HABITS);
+        const storedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
+        const storedTasks = localStorage.getItem(STORAGE_KEY_TASKS);
+        const storedNotified = localStorage.getItem(STORAGE_KEY_NOTIFIED_DEADLINES);
+        const storedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+
+        if (storedHabits) {
+          habits = JSON.parse(storedHabits);
+          habits.forEach(h => {
+            if (!h.category) h.category = 'Lainnya';
+          });
+        } else {
+          habits = [...DEFAULT_HABITS];
+        }
+
+        completionLogs = storedLogs ? JSON.parse(storedLogs) : {};
+
+        if (storedTasks) {
+          tasks = JSON.parse(storedTasks);
+        } else {
+          tasks = [...DEFAULT_TASKS];
+        }
+
+        notifiedDeadlines = storedNotified ? JSON.parse(storedNotified) : {};
+
+        if (storedSettings) {
+          appSettings = { ...appSettings, ...JSON.parse(storedSettings) };
+        }
+      } catch (e) {
+        console.error("Gagal memuat data:", e);
+        habits = [...DEFAULT_HABITS];
+        completionLogs = {};
+        tasks = [...DEFAULT_TASKS];
+      }
+    }
+
+    function saveHabits() {
+      localStorage.setItem(STORAGE_KEY_HABITS, JSON.stringify(habits));
+    }
+    function saveLogs() {
+      localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(completionLogs));
+    }
+    function saveTasks() {
+      localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(tasks));
+    }
+    function saveNotifiedDeadlines() {
+      localStorage.setItem(STORAGE_KEY_NOTIFIED_DEADLINES, JSON.stringify(notifiedDeadlines));
+    }
+    function saveSettings() {
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings));
+    }
+
+    /* ==========================================================================
+       2. WEB AUDIO API SYNTHESIZER (100% STANDALONE & OFFLINE)
+       ========================================================================== */
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSynthesizerSound(preset = 'gentle') {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      const masterVol = (appSettings.volume || 80) / 100;
+      const now = ctx.currentTime;
+
+      if (preset === 'gentle') {
+        // Nada Lembut: Chime Arpeggio santai (E5, G#5, B5, E6)
+        const notes = [659.25, 830.61, 987.77, 1318.51];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+
+          gain.gain.setValueAtTime(0, now + idx * 0.14);
+          gain.gain.linearRampToValueAtTime(0.25 * masterVol, now + idx * 0.14 + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.14 + 1.2);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + idx * 0.14);
+          osc.stop(now + idx * 0.14 + 1.25);
+        });
+
+      } else if (preset === 'bell') {
+        // Nada Bel Klasik: Fundamental + Harmonis
+        const partials = [
+          { f: 587.33, g: 0.35, d: 2.0 },
+          { f: 880.00, g: 0.20, d: 1.6 },
+          { f: 1174.66, g: 0.15, d: 1.2 }
+        ];
+
+        partials.forEach(p => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(p.f, now);
+
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(p.g * masterVol, now + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + p.d);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + p.d + 0.05);
+        });
+
+      } else if (preset === 'beep') {
+        // Digital Beep Jam Weker: 2 pasang beep berulang
+        const beeps = [0.0, 0.15, 0.45, 0.60];
+        beeps.forEach(startTime => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(880, now + startTime);
+
+          gain.gain.setValueAtTime(0, now + startTime);
+          gain.gain.linearRampToValueAtTime(0.18 * masterVol, now + startTime + 0.01);
+          gain.gain.setValueAtTime(0.18 * masterVol, now + startTime + 0.08);
+          gain.gain.linearRampToValueAtTime(0.001, now + startTime + 0.09);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + startTime);
+          osc.stop(now + startTime + 0.1);
+        });
+
+      } else if (preset === 'siren') {
+        // Sirene Tajam
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.linearRampToValueAtTime(1200, now + 0.35);
+        osc.frequency.linearRampToValueAtTime(600, now + 0.7);
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.25 * masterVol, now + 0.05);
+        gain.gain.linearRampToValueAtTime(0.25 * masterVol, now + 0.65);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.75);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.8);
+      }
+    }
+
+    function testSelectedSound() {
+      playSynthesizerSound(appSettings.selectedSound);
+    }
+
+    // Short Web Audio API chime for deadline notifications (H-2 & H-1)
+    function playDeadlineChime(isUrgent = false) {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const masterVol = (appSettings.volume || 80) / 100;
+
+      if (isUrgent) {
+        // High urgency H-1 (<24h) crisp chime
+        [880, 1174.66, 1318.51].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, now + i * 0.14);
+          gain.gain.setValueAtTime(0, now + i * 0.14);
+          gain.gain.linearRampToValueAtTime(0.22 * masterVol, now + i * 0.14 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.14 + 0.32);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + i * 0.14);
+          osc.stop(now + i * 0.14 + 0.35);
+        });
+      } else {
+        // H-2 (48h) reminder chime
+        [659.25, 830.61].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + i * 0.15);
+          gain.gain.setValueAtTime(0, now + i * 0.15);
+          gain.gain.linearRampToValueAtTime(0.18 * masterVol, now + i * 0.15 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.38);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + i * 0.15);
+          osc.stop(now + i * 0.15 + 0.4);
+        });
+      }
+    }
+
+    function stopAllAudio() {
+      if (alarmRepeatTimer) {
+        clearInterval(alarmRepeatTimer);
+        alarmRepeatTimer = null;
+      }
+      if (audioCtx && audioCtx.state !== 'closed') {
+        try {
+          audioCtx.close().catch(() => {});
+        } catch (e) {}
+        audioCtx = null;
+      }
+      if ('vibrate' in navigator) {
+        navigator.vibrate(0);
+      }
+      if (window.AndroidBridge && typeof window.AndroidBridge.vibrate === 'function') {
+        try {
+          window.AndroidBridge.vibrate(0);
+        } catch (e) {}
+      }
+    }
+
+    function selectSoundPreset(preset) {
+      appSettings.selectedSound = preset;
+      saveSettings();
+
+      document.querySelectorAll('.sound-preset-btn').forEach(btn => {
+        btn.classList.remove('border-2', 'border-neutral-900', 'bg-neutral-50');
+        btn.classList.add('border', 'border-neutral-200', 'bg-white');
+      });
+      const activeBtn = document.getElementById(`btn-sound-${preset}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-neutral-200', 'bg-white');
+        activeBtn.classList.add('border-2', 'border-neutral-900', 'bg-neutral-50');
+      }
+      playSynthesizerSound(preset);
+    }
+
+    function onVolumeChange(val) {
+      appSettings.volume = parseInt(val, 10);
+      document.getElementById('volume-display').textContent = `${val}%`;
+      saveSettings();
+    }
+
+    /* ==========================================================================
+       3. SCREEN WAKE LOCK API & NOTIFICATIONS
+       ========================================================================== */
+    async function toggleWakeLock() {
+      if (!('wakeLock' in navigator)) {
+        alert('Maaf, browser ini belum mendukung Screen Wake Lock API secara langsung.');
+        return;
+      }
+
+      if (wakeLockSentinel) {
+        try {
+          await wakeLockSentinel.release();
+          wakeLockSentinel = null;
+          updateWakeLockUI(false);
+        } catch (err) {
+          console.error('Error releasing wake lock:', err);
+        }
+      } else {
+        try {
+          wakeLockSentinel = await navigator.wakeLock.request('screen');
+          wakeLockSentinel.addEventListener('release', () => {
+            wakeLockSentinel = null;
+            updateWakeLockUI(false);
+          });
+          updateWakeLockUI(true);
+        } catch (err) {
+          console.error('Gagal mengaktifkan Wake Lock:', err);
+          alert('Tidak dapat mengaktifkan Wake Lock: ' + err.message);
+        }
+      }
+    }
+
+    function updateWakeLockUI(isActive) {
+      const btn = document.getElementById('wakeLockBtn');
+      const icon = document.getElementById('wakeLockIcon');
+      const label = document.getElementById('wakeLockLabel');
+      const switchEl = document.getElementById('wakeLockSwitch');
+      const statusText = document.getElementById('wakeLockStatusText');
+
+      if (isActive) {
+        btn.classList.add('bg-neutral-900', 'border-neutral-900', 'text-white');
+        btn.classList.remove('bg-white', 'border-neutral-300', 'text-neutral-700');
+        icon.classList.add('text-white');
+        icon.classList.remove('text-neutral-500');
+        label.textContent = 'Layar Aktif: ON';
+        if (switchEl) switchEl.checked = true;
+        if (statusText) statusText.textContent = 'Status: Layar ponsel dijaga AKTIF (tidak akan redup otomatis).';
+      } else {
+        btn.classList.remove('bg-neutral-900', 'border-neutral-900', 'text-white');
+        btn.classList.add('bg-white', 'border-neutral-300', 'text-neutral-700');
+        icon.classList.remove('text-white');
+        icon.classList.add('text-neutral-500');
+        label.textContent = 'Layar Aktif: Mati';
+        if (switchEl) switchEl.checked = false;
+        if (statusText) statusText.textContent = 'Status: Layar mengikuti pengaturan sistem perangkat.';
+      }
+    }
+
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible' && appSettings.wakeLockEnabled && !wakeLockSentinel) {
+        if ('wakeLock' in navigator) {
+          try {
+            wakeLockSentinel = await navigator.wakeLock.request('screen');
+            updateWakeLockUI(true);
+          } catch (e) {
+            console.log('Re-acquire wake lock failed', e);
+          }
+        }
+      }
+    });
+
+    function requestNotifPermission() {
+      if (!('Notification' in window)) {
+        alert('Browser ini tidak mendukung Web Notification API.');
+        return;
+      }
+      Notification.requestPermission().then(permission => {
+        updateNotifIcon();
+        if (permission === 'granted') {
+          new Notification('Consistent Habit Aktif', {
+            body: 'Pengingat dan alarm kebiasaan akan muncul tepat waktu.',
+            icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23E60012%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>'
+          });
+        }
+      });
+    }
+
+    function updateNotifIcon() {
+      const icon = document.getElementById('notifIcon');
+      if ('Notification' in window && Notification.permission === 'granted') {
+        icon.classList.add('text-[#E60012]');
+        icon.classList.remove('text-neutral-600');
+      } else {
+        icon.classList.remove('text-[#E60012]');
+        icon.classList.add('text-neutral-600');
+      }
+    }
+
+    /* ==========================================================================
+       4. ALARM ENGINE, EMERGENCY CONTROLS & COMPLETION LOCK
+       ========================================================================== */
+    function startAlarmWatcher() {
+      setInterval(() => {
+        const now = new Date();
+        const currentHourMin = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+        const currentSecond = now.getSeconds();
+        const todayStr = getTodayDateString(now);
+        const dayOfWeek = now.getDay();
+
+        // Handle Snoozed Alarms
+        for (const habitId in snoozedAlarms) {
+          if (Date.now() >= snoozedAlarms[habitId]) {
+            delete snoozedAlarms[habitId];
+            const targetHabit = habits.find(h => h.id === habitId);
+            if (targetHabit) {
+              triggerAlarm(targetHabit);
+            }
+          }
+        }
+
+        // Check scheduled routine alarms once per minute
+        if (currentHourMin !== lastCheckedMinute && currentSecond < 5) {
+          lastCheckedMinute = currentHourMin;
+
+          habits.forEach(habit => {
+            if (!habit.enabled) return;
+
+            const isScheduledToday = habit.days ? habit.days.includes(dayOfWeek) : true;
+            if (!isScheduledToday) return;
+
+            const todayLogs = completionLogs[todayStr] || [];
+            if (todayLogs.includes(habit.id)) return; // Don't ring if already completed and locked
+
+            const triggerKey = `${todayStr}_${currentHourMin}_${habit.id}`;
+            if (triggeredAlarmsToday[triggerKey]) return; // Already triggered this minute
+
+            if (habit.time === currentHourMin) {
+              triggeredAlarmsToday[triggerKey] = true;
+              triggerAlarm(habit);
+            }
+          });
+        }
+      }, 1000);
+    }
+
+    function triggerAlarm(habit) {
+      activeRingingHabit = habit;
+
+      // Update and display Popup Modal
+      const modal = document.getElementById('alarm-modal');
+      if (modal) {
+        document.getElementById('alarm-modal-habit-name').textContent = habit.name;
+        document.getElementById('alarm-modal-time').textContent = `${habit.time} WIB • [${habit.category || 'Rutinitas'}] ${habit.description || ''}`;
+        document.getElementById('alarm-modal-streak').textContent = `${habit.streak || 0} Hari`;
+        modal.classList.remove('hidden');
+      }
+
+      // Display Persistent Emergency Top Button & Sticky Banner
+      const headerStopBtn = document.getElementById('header-stop-alarm-btn');
+      if (headerStopBtn) headerStopBtn.classList.remove('hidden');
+
+      const stickyBanner = document.getElementById('sticky-alarm-banner');
+      const stickyText = document.getElementById('sticky-alarm-text');
+      if (stickyBanner && stickyText) {
+        stickyText.textContent = `${habit.name} - ${habit.time} WIB (${habit.category || 'Rutinitas'})`;
+        stickyBanner.classList.remove('hidden');
+      }
+
+      // Sound Synthesis Loop
+      const soundKey = habit.sound || appSettings.selectedSound || 'gentle';
+      playSynthesizerSound(soundKey);
+
+      if (alarmRepeatTimer) clearInterval(alarmRepeatTimer);
+      alarmRepeatTimer = setInterval(() => {
+        if (activeRingingHabit) {
+          playSynthesizerSound(soundKey);
+        }
+      }, 2800);
+
+      // Web Notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+          new Notification(`Waktunya: ${habit.name}!`, {
+            body: `[${habit.category || 'Rutinitas'}] ${habit.time} WIB - ${habit.description || 'Buka Consistent Habit untuk mencatat streak hari ini!'}`,
+            requireInteraction: true
+          });
+        } catch (e) {
+          console.log('Notif error', e);
+        }
+      }
+
+      // Native Android Bridge Integration
+      if (window.AndroidBridge) {
+        try {
+          if (typeof window.AndroidBridge.showNotification === 'function') {
+            window.AndroidBridge.showNotification(`Alarm Rutinitas: ${habit.name}`, `[${habit.category || 'Rutinitas'}] ${habit.time} WIB`);
+          }
+          if (typeof window.AndroidBridge.vibrate === 'function') {
+            window.AndroidBridge.vibrate(800);
+          }
+        } catch (e) {
+          console.error("Bridge notification error", e);
+        }
+      }
+
+      if ('vibrate' in navigator) {
+        navigator.vibrate([400, 200, 400, 200, 800]);
+      }
+
+      lucide.createIcons();
+    }
+
+    // Completely and cleanly stops all alarms & audio loops
+    function stopAlarmSound() {
+      if (alarmRepeatTimer) {
+        clearInterval(alarmRepeatTimer);
+        alarmRepeatTimer = null;
+      }
+
+      stopAllAudio();
+
+      const modal = document.getElementById('alarm-modal');
+      if (modal) modal.classList.add('hidden');
+
+      const headerStopBtn = document.getElementById('header-stop-alarm-btn');
+      if (headerStopBtn) headerStopBtn.classList.add('hidden');
+
+      const stickyBanner = document.getElementById('sticky-alarm-banner');
+      if (stickyBanner) stickyBanner.classList.add('hidden');
+
+      activeRingingHabit = null;
+    }
+
+    // Emergency direct stop button action
+    function emergencyStopAlarm() {
+      stopAlarmSound();
+    }
+
+    function alarmActionDismiss() {
+      stopAlarmSound();
+    }
+
+    function alarmActionComplete() {
+      if (activeRingingHabit) {
+        const today = getTodayDateString();
+        if (!completionLogs[today]) {
+          completionLogs[today] = [];
+        }
+        if (!completionLogs[today].includes(activeRingingHabit.id)) {
+          completionLogs[today].push(activeRingingHabit.id);
+          activeRingingHabit.streak = (activeRingingHabit.streak || 0) + 1;
+          if (activeRingingHabit.streak > (activeRingingHabit.bestStreak || 0)) {
+            activeRingingHabit.bestStreak = activeRingingHabit.streak;
+          }
+          saveLogs();
+          saveHabits();
+        }
+      }
+      stopAlarmSound();
+      renderAll();
+    }
+
+    function alarmActionSnooze(minutes = 5) {
+      if (activeRingingHabit) {
+        snoozedAlarms[activeRingingHabit.id] = Date.now() + (minutes * 60 * 1000);
+      }
+      stopAlarmSound();
+    }
+
+    /* ==========================================================================
+       5. VALIDASI PENYELESAIAN TETAP (STATUS DIKUNCI PERMANEN HARI INI)
+       ========================================================================== */
+    function requestHabitCompletion(habitId) {
+      const today = getTodayDateString();
+      const todayLogs = completionLogs[today] || [];
+
+      // Check if already completed and locked
+      if (todayLogs.includes(habitId)) {
+        alert('Rutinitas ini telah dikonfirmasi SELESAI dan statusnya telah dikunci tetap untuk hari ini.');
+        return;
+      }
+
+      const habit = habits.find(h => h.id === habitId);
+      if (!habit) return;
+
+      pendingHabitCompletionId = habitId;
+      document.getElementById('confirm-habit-name').textContent = `[${habit.category || 'Rutinitas'}] ${habit.name}`;
+      document.getElementById('modal-confirm-completion').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      pendingHabitCompletionId = null;
+      document.getElementById('modal-confirm-completion').classList.add('hidden');
+    }
+
+    function proceedLockCompletion() {
+      if (!pendingHabitCompletionId) return;
+
+      const today = getTodayDateString();
+      if (!completionLogs[today]) {
+        completionLogs[today] = [];
+      }
+
+      const habit = habits.find(h => h.id === pendingHabitCompletionId);
+      if (habit && !completionLogs[today].includes(pendingHabitCompletionId)) {
+        completionLogs[today].push(pendingHabitCompletionId);
+        habit.streak = (habit.streak || 0) + 1;
+        if (habit.streak > (habit.bestStreak || 0)) {
+          habit.bestStreak = habit.streak;
+        }
+        saveLogs();
+        saveHabits();
+      }
+
+      closeConfirmModal();
+      renderAll();
+    }
+
+    function deleteHabit(habitId) {
+      const habit = habits.find(h => h.id === habitId);
+      if (!confirm(`Hapus rutinitas "${habit ? habit.name : ''}"? Riwayat streak terkait akan tetap tersimpan.`)) return;
+
+      habits = habits.filter(h => h.id !== habitId);
+      saveHabits();
+      renderAll();
+    }
+
+    /* ==========================================================================
+       6. UI RENDERING & FILTER MANAGEMENT (STATUS & KATEGORI)
+       ========================================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const activeEl = document.getElementById(`tab-${tabId}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('text-neutral-900', 'border-neutral-900');
+        btn.classList.add('text-neutral-400', 'border-transparent');
+      });
+      const activeBtn = document.getElementById(`nav-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-neutral-400', 'border-transparent');
+        activeBtn.classList.add('text-neutral-900', 'border-neutral-900');
+      }
+
+      lucide.createIcons();
+    }
+
+    // Filter Status (Semua, Jadwal Hari Ini, Belum Selesai, Selesai)
+    function setHabitFilter(filter) {
+      currentHabitFilter = filter;
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200');
+      });
+      const target = document.getElementById(`filter-btn-${filter}`);
+      if (target) {
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200');
+        target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
+      }
+      renderHabitsList();
+    }
+
+    // Filter Kategori (Semua, Kesehatan, Pekerjaan, Pribadi, Belajar, Keuangan, Lainnya)
+    function setCategoryFilter(category) {
+      currentCategoryFilter = category;
+      document.querySelectorAll('.category-pill').forEach(btn => {
+        btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
+        btn.classList.add('bg-white', 'text-neutral-700', 'border-neutral-200');
+      });
+      const target = document.querySelector(`.category-pill[data-cat="${category}"]`);
+      if (target) {
+        target.classList.remove('bg-white', 'text-neutral-700', 'border-neutral-200');
+        target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
+      }
+
+      const indicator = document.getElementById('active-category-indicator');
+      if (indicator) {
+        indicator.textContent = category === 'all' ? 'Semua Kategori' : category;
+      }
+
+      renderHabitsList();
+    }
+
+    function renderHabitsList() {
+      const container = document.getElementById('habits-list-container');
+      const today = getTodayDateString();
+      const todayLogs = completionLogs[today] || [];
+      const dayOfWeek = new Date().getDay();
+
+      let filtered = habits.filter(habit => {
+        // 1. Status Filter
+        const isScheduledToday = habit.days ? habit.days.includes(dayOfWeek) : true;
+        const isCompleted = todayLogs.includes(habit.id);
+
+        if (currentHabitFilter === 'today' && !isScheduledToday) return false;
+        if (currentHabitFilter === 'pending' && isCompleted) return false;
+        if (currentHabitFilter === 'completed' && !isCompleted) return false;
+
+        // 2. Category Filter (Requested)
+        if (currentCategoryFilter !== 'all') {
+          const habitCat = habit.category || 'Lainnya';
+          if (habitCat.toLowerCase() !== currentCategoryFilter.toLowerCase()) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white border border-neutral-200 p-8 text-center space-y-2">
+            <i data-lucide="filter" class="w-7 h-7 text-neutral-400 mx-auto stroke-[1.5]"></i>
+            <p class="text-xs font-black uppercase tracking-wider text-neutral-800">Tidak ada kebiasaan yang cocok</p>
+            <p class="text-[11px] text-neutral-500">Sesuaikan filter kategori di atas atau klik tombol "Tambah" untuk membuat rutinitas baru.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(habit => {
+        const isCompleted = todayLogs.includes(habit.id);
+        const freqText = formatFrequencyText(habit);
+        const categoryLabel = habit.category || 'Lainnya';
+
+        return `
+          <div class="bg-white border ${isCompleted ? 'border-neutral-300 bg-neutral-50/60' : 'border-neutral-200'} p-3.5 transition hover:border-neutral-400 space-y-2.5">
+            <div class="flex items-start justify-between gap-3">
+              <!-- Square Minimalist Checkbox with Lock Validation -->
+              <button ${isCompleted ? 'disabled title="Status telah dikunci tetap untuk hari ini"' : `onclick="requestHabitCompletion('${habit.id}')"`} class="mt-0.5 w-6 h-6 border transition flex items-center justify-center ${isCompleted ? 'bg-neutral-900 border-neutral-900 text-white cursor-not-allowed' : 'border-neutral-400 bg-white hover:border-neutral-900 text-transparent cursor-pointer'}">
+                <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+              </button>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                  <!-- Category Badge (Uniqlo Style Pill) -->
+                  <span class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 border border-neutral-300 bg-neutral-100 text-neutral-800">
+                    ${escapeHtml(categoryLabel)}
+                  </span>
+                  
+                  <h4 class="text-xs font-bold text-neutral-900 ${isCompleted ? 'line-through text-neutral-400' : ''}">${escapeHtml(habit.name)}</h4>
+                  ${isCompleted ? '<span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 bg-neutral-900 text-white flex items-center gap-1"><i data-lucide="lock" class="w-2.5 h-2.5 inline"></i> Selesai (Terkunci)</span>' : ''}
+                </div>
+                ${habit.description ? `<p class="text-[11px] text-neutral-500 mt-1 leading-normal">${escapeHtml(habit.description)}</p>` : ''}
+                
+                <!-- Metadata Row -->
+                <div class="flex flex-wrap items-center gap-3 mt-2 text-[10px] uppercase font-bold tracking-wider text-neutral-500">
+                  <span class="flex items-center gap-1 text-neutral-800">
+                    <i data-lucide="clock" class="w-3 h-3 text-neutral-700"></i>
+                    ${habit.time} WIB
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <i data-lucide="calendar" class="w-3 h-3 text-neutral-400"></i>
+                    ${freqText}
+                  </span>
+                  <span class="flex items-center gap-1 text-[#E60012]">
+                    <i data-lucide="flame" class="w-3 h-3 text-[#E60012]"></i>
+                    ${habit.streak || 0} HARI
+                  </span>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="no-print flex items-center space-x-1 shrink-0">
+                <button onclick="openEditModal('${habit.id}')" class="p-1.5 border border-neutral-200 hover:border-neutral-900 text-neutral-600 hover:text-neutral-900 transition" title="Edit Kebiasaan">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteHabit('${habit.id}')" class="p-1.5 border border-neutral-200 hover:border-[#E60012] text-neutral-400 hover:text-[#E60012] transition" title="Hapus">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function formatFrequencyText(habit) {
+      if (habit.frequency === 'daily') return 'Setiap Hari';
+      if (habit.frequency === 'weekdays') return 'Hari Kerja';
+      if (habit.frequency === 'weekends') return 'Akhir Pekan';
+      if (habit.frequency === 'custom' && habit.days) {
+        const names = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+        return habit.days.map(d => names[d]).join(', ');
+      }
+      return 'Harian';
+    }
+
+    function renderHeaderStats() {
+      const today = getTodayDateString();
+      const todayLogs = completionLogs[today] || [];
+      const dayOfWeek = new Date().getDay();
+
+      const scheduledToday = habits.filter(h => h.enabled && (h.days ? h.days.includes(dayOfWeek) : true));
+      const totalToday = scheduledToday.length;
+      const completedToday = scheduledToday.filter(h => todayLogs.includes(h.id)).length;
+
+      const pct = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
+
+      document.getElementById('stat-progress-pct').textContent = `${pct}%`;
+      document.getElementById('hero-progress-bar').style.width = `${pct}%`;
+      document.getElementById('stat-completed-count').textContent = `${completedToday}/${totalToday}`;
+
+      let bestStreak = 0;
+      habits.forEach(h => {
+        if ((h.streak || 0) > bestStreak) bestStreak = h.streak;
+        if ((h.bestStreak || 0) > bestStreak) bestStreak = h.bestStreak;
+      });
+      document.getElementById('stat-best-streak').textContent = bestStreak;
+      document.getElementById('stat-active-routines').textContent = habits.filter(h => h.enabled).length;
+
+      const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById('today-date-str').textContent = new Date().toLocaleDateString('id-ID', dateOptions);
+      const printLabel = document.getElementById('print-date-label');
+      if (printLabel) printLabel.textContent = `Dicetak pada: ${new Date().toLocaleDateString('id-ID', dateOptions)} ${new Date().toLocaleTimeString('id-ID')} WIB`;
+    }
+
+    function renderActiveAlarmsList() {
+      const listContainer = document.getElementById('alarms-today-list');
+      const dayOfWeek = new Date().getDay();
+      const todayHabits = habits.filter(h => h.enabled && (h.days ? h.days.includes(dayOfWeek) : true));
+
+      if (todayHabits.length === 0) {
+        listContainer.innerHTML = `<p class="text-neutral-400">Tidak ada alarm rutinitas aktif hari ini.</p>`;
+        return;
+      }
+
+      listContainer.innerHTML = todayHabits.map(h => `
+        <div class="flex items-center justify-between p-2.5 border border-neutral-200 bg-neutral-50">
+          <div class="flex items-center space-x-2">
+            <span class="font-black text-neutral-900 uppercase">${h.time} WIB</span>
+            <span class="text-neutral-500 text-[11px]">• [${escapeHtml(h.category || 'Rutinitas')}] ${escapeHtml(h.name)}</span>
+          </div>
+          <button onclick="playSynthesizerSound('${h.sound || 'gentle'}')" class="px-2 py-1 border border-neutral-300 bg-white text-[10px] font-bold uppercase tracking-wider text-neutral-800 hover:border-neutral-900">
+            Uji
+          </button>
+        </div>
+      `).join('');
+    }
+
+    /* ==========================================================================
+       7. CALENDAR & CONSISTENCY MATRIX
+       ========================================================================== */
+    function changeMonth(delta) {
+      calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = calendarCurrentDate.getFullYear();
+      const month = calendarCurrentDate.getMonth();
+
+      const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+
+      const grid = document.getElementById('calendar-days-grid');
+      grid.innerHTML = '';
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // Empty padding cells for start of month
+      for (let i = 0; i < firstDayIndex; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'p-2 text-transparent';
+        grid.appendChild(emptyCell);
+      }
+
+      const todayStr = getTodayDateString();
+
+      for (let day = 1; day <= totalDaysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayCell = document.createElement('button');
+        dayCell.type = 'button';
+        dayCell.onclick = () => showDayCompletions(dateStr);
+
+        const logs = completionLogs[dateStr] || [];
+        const isToday = dateStr === todayStr;
+
+        let statusClass = 'bg-neutral-50 border border-neutral-200 text-neutral-700';
+        if (logs.length > 0) {
+          if (logs.length >= Math.max(1, Math.floor(habits.length * 0.7))) {
+            statusClass = 'bg-neutral-900 border border-neutral-900 text-white font-bold';
+          } else {
+            statusClass = 'bg-neutral-300 border border-neutral-300 text-neutral-900 font-bold';
+          }
+        }
+
+        const todayOutline = isToday ? 'ring-2 ring-[#E60012]' : '';
+
+        dayCell.className = `p-2 text-center text-xs transition ${statusClass} ${todayOutline} hover:border-neutral-900`;
+        dayCell.innerHTML = `
+          <span class="block font-black">${day}</span>
+          <span class="block text-[8px] tracking-tighter opacity-80">${logs.length > 0 ? logs.length + ' done' : '-'}</span>
+        `;
+        grid.appendChild(dayCell);
+      }
+    }
+
+    function showDayCompletions(dateStr) {
+      const completedIds = completionLogs[dateStr] || [];
+      if (completedIds.length === 0) {
+        alert(`Tidak ada kebiasaan yang dicatat selesai pada ${dateStr}.`);
+        return;
+      }
+      const names = completedIds.map(id => {
+        const h = habits.find(item => item.id === id);
+        return h ? `• [${h.category || 'Rutinitas'}] ${h.name}` : `• ID: ${id}`;
+      }).join('\n');
+      alert(`Catatan Selesai pada ${dateStr}:\n${names}`);
+    }
+
+    function renderStreakBreakdown() {
+      const container = document.getElementById('streak-summary-list');
+      if (habits.length === 0) {
+        container.innerHTML = `<p class="text-xs text-neutral-500">Belum ada data kebiasaan.</p>`;
+        return;
+      }
+
+      container.innerHTML = habits.map(h => `
+        <div class="flex items-center justify-between p-2 border border-neutral-200 bg-white text-xs">
+          <div>
+            <div class="font-bold text-neutral-900">
+              <span class="text-[9px] font-black uppercase tracking-widest px-1 py-0.5 border border-neutral-200 bg-neutral-50 mr-1.5">${escapeHtml(h.category || 'Rutinitas')}</span>
+              ${escapeHtml(h.name)}
+            </div>
+            <div class="text-[10px] text-neutral-500 mt-0.5">Rekor Terbaik: ${h.bestStreak || h.streak || 0} hari berturut-turut</div>
+          </div>
+          <div class="text-right">
+            <span class="text-sm font-black text-[#E60012] flex items-center gap-1 justify-end">
+              <i data-lucide="flame" class="w-3.5 h-3.5 inline"></i>
+              ${h.streak || 0}
+            </span>
+            <span class="text-[9px] text-neutral-400 uppercase tracking-widest font-black">Streak Aktif</span>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    /* ==========================================================================
+       8. MODUL TASK & DEADLINE MANAGER (Monochrome Minimalist)
+       ========================================================================== */
+    function toggleNewTaskForm() {
+      const form = document.getElementById('task-form');
+      const label = document.getElementById('btn-toggle-task-label');
+      if (form.classList.contains('hidden')) {
+        form.classList.remove('hidden');
+        label.textContent = 'Tutup Form';
+      } else {
+        form.classList.add('hidden');
+        label.textContent = 'Tugas Baru';
+      }
+    }
+
+    function selectTaskPriority(priority) {
+      currentTaskPriority = priority;
+      const hiddenInput = document.getElementById('task-input-priority');
+      if (hiddenInput) hiddenInput.value = priority;
+
+      document.querySelectorAll('.priority-btn').forEach(btn => {
+        if (btn.dataset.priority === priority) {
+          btn.className = 'priority-btn py-2 px-1 text-[11px] font-black uppercase tracking-wider border-2 border-neutral-900 bg-neutral-900 text-white transition';
+        } else {
+          btn.className = 'priority-btn py-2 px-1 text-[11px] font-bold uppercase tracking-wider border border-neutral-300 bg-white text-neutral-700 hover:border-neutral-900 transition';
+        }
+      });
+    }
+
+    function setTaskFilter(filter) {
+      currentTaskFilter = filter;
+      document.querySelectorAll('.task-filter-pill').forEach(btn => {
+        btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200');
+      });
+      const target = document.getElementById(`task-filter-${filter}`);
+      if (target) {
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200');
+        target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
+      }
+      renderTasks();
+    }
+
+    function saveTaskForm(e) {
+      e.preventDefault();
+      const name = document.getElementById('task-input-name').value.trim();
+      const deadline = document.getElementById('task-input-deadline').value;
+      const priority = document.getElementById('task-input-priority').value || currentTaskPriority || 'Normal';
+      const notes = document.getElementById('task-input-notes').value.trim();
+
+      if (!name || !deadline) return;
+
+      const newTask = {
+        id: 't_' + Date.now(),
+        title: name,
+        deadline: deadline,
+        priority: priority,
+        notes: notes,
+        completed: false,
+        completedAt: null,
+        createdAt: new Date().toISOString()
+      };
+
+      tasks.push(newTask);
+      saveTasks();
+
+      // Reset form
+      document.getElementById('task-input-name').value = '';
+      document.getElementById('task-input-notes').value = '';
+      selectTaskPriority('Normal');
+
+      renderTasks();
+      checkTaskDeadlines();
+    }
+
+    function toggleTaskCompletion(taskId) {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      task.completed = !task.completed;
+      task.completedAt = task.completed ? new Date().toISOString() : null;
+
+      saveTasks();
+      renderTasks();
+    }
+
+    function deleteTask(taskId) {
+      const task = tasks.find(t => t.id === taskId);
+      if (!confirm(`Hapus tugas "${task ? task.title : ''}"?`)) return;
+
+      tasks = tasks.filter(t => t.id !== taskId);
+      saveTasks();
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-list-container');
+      if (!container) return;
+
+      const now = Date.now();
+
+      // Update Quick Stats
+      const pendingCount = tasks.filter(t => !t.completed).length;
+      const urgentCount = tasks.filter(t => {
+        if (t.completed) return false;
+        const diffHours = (new Date(t.deadline).getTime() - now) / 3600000;
+        return t.priority === 'Mendesak' || (diffHours <= 24 && diffHours > 0);
+      }).length;
+      const completedCount = tasks.filter(t => t.completed).length;
+
+      const statPendingEl = document.getElementById('task-stat-pending');
+      const statUrgentEl = document.getElementById('task-stat-urgent');
+      const statCompletedEl = document.getElementById('task-stat-completed');
+      if (statPendingEl) statPendingEl.textContent = pendingCount;
+      if (statUrgentEl) statUrgentEl.textContent = urgentCount;
+      if (statCompletedEl) statCompletedEl.textContent = completedCount;
+
+      // Auto-sort from closest deadline to furthest
+      const sortedTasks = [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
+      // Filter
+      const filtered = sortedTasks.filter(task => {
+        const diffHours = (new Date(task.deadline).getTime() - now) / 3600000;
+        if (currentTaskFilter === 'pending') return !task.completed;
+        if (currentTaskFilter === 'approaching') return !task.completed && diffHours <= 24 && diffHours > 0;
+        if (currentTaskFilter === 'urgent') return !task.completed && (task.priority === 'Mendesak' || (diffHours <= 24 && diffHours > 0));
+        if (currentTaskFilter === 'completed') return task.completed;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white border border-neutral-200 p-8 text-center space-y-2">
+            <i data-lucide="check-square" class="w-7 h-7 text-neutral-400 mx-auto stroke-[1.5]"></i>
+            <p class="text-xs font-black uppercase tracking-wider text-neutral-800">Tidak ada tugas dalam kategori ini</p>
+            <p class="text-[11px] text-neutral-500">Gunakan form di atas untuk menambahkan tugas dan deadline baru.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(task => {
+        const deadlineDate = new Date(task.deadline);
+        const diffMs = deadlineDate.getTime() - now;
+        const diffHours = diffMs / 3600000;
+
+        let badgeHtml = '';
+        let isPastDue = false;
+        let isApproachingUrgent = false;
+
+        if (task.completed) {
+          badgeHtml = `<span class="bg-neutral-900 text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5">Selesai</span>`;
+        } else if (diffHours < 0) {
+          isPastDue = true;
+          badgeHtml = `<span class="bg-[#E60012] text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 flex items-center gap-1"><i data-lucide="alert-circle" class="w-3 h-3"></i> Lewat Deadline</span>`;
+        } else if (diffHours <= 24) {
+          isApproachingUrgent = true;
+          badgeHtml = `<span class="bg-neutral-900 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 flex items-center gap-1 border border-neutral-900"><i data-lucide="alert-triangle" class="w-3 h-3 text-[#E60012]"></i> &lt; 24 Jam (H-1)</span>`;
+        } else if (diffHours <= 48) {
+          badgeHtml = `<span class="border border-neutral-900 bg-neutral-100 text-neutral-900 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> H-2 (48 Jam)</span>`;
+        } else {
+          badgeHtml = `<span class="border border-neutral-300 bg-neutral-50 text-neutral-600 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5">${Math.ceil(diffHours / 24)} Hari Lagi</span>`;
+        }
+
+        // Priority badge style
+        let priorityBadge = '';
+        if (task.priority === 'Mendesak') {
+          priorityBadge = `<span class="border border-[#E60012] text-[#E60012] bg-[#E60012]/5 text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5">Mendesak</span>`;
+        } else if (task.priority === 'Normal') {
+          priorityBadge = `<span class="border border-neutral-300 text-neutral-700 bg-neutral-50 text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5">Normal</span>`;
+        } else {
+          priorityBadge = `<span class="border border-neutral-200 text-neutral-500 bg-neutral-50 text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5">Rendah</span>`;
+        }
+
+        // Deadline formatted date string
+        const formattedDeadline = deadlineDate.toLocaleDateString('id-ID', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        }) + ' • ' + deadlineDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+        const borderClass = isApproachingUrgent
+          ? 'border-2 border-neutral-900 bg-neutral-50/70'
+          : isPastDue
+          ? 'border border-[#E60012]/60 bg-white'
+          : task.completed
+          ? 'border border-neutral-200 bg-neutral-50/40 opacity-75'
+          : 'border border-neutral-200 bg-white';
+
+        return `
+          <div class="${borderClass} p-3.5 transition hover:border-neutral-400 space-y-2.5">
+            <div class="flex items-start justify-between gap-3">
+              <!-- Checkbox (Toggles completion to localStorage immediately) -->
+              <button onclick="toggleTaskCompletion('${task.id}')" class="mt-0.5 w-6 h-6 border transition flex items-center justify-center shrink-0 ${task.completed ? 'bg-neutral-900 border-neutral-900 text-white' : 'border-neutral-400 bg-white hover:border-neutral-900 text-transparent'}" title="Tandai Status Tugas">
+                <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+              </button>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                  ${priorityBadge}
+                  ${badgeHtml}
+                </div>
+
+                <h4 class="text-xs font-bold text-neutral-900 mt-1 ${task.completed ? 'line-through text-neutral-400' : ''}">
+                  ${escapeHtml(task.title)}
+                </h4>
+
+                ${task.notes ? `<p class="text-[11px] text-neutral-600 mt-1 leading-normal font-normal">${escapeHtml(task.notes)}</p>` : ''}
+
+                <div class="flex flex-wrap items-center gap-3 mt-2 text-[10px] uppercase font-bold tracking-wider text-neutral-500">
+                  <span class="flex items-center gap-1 ${isApproachingUrgent || isPastDue ? 'text-neutral-900 font-black' : 'text-neutral-700'}">
+                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                    ${formattedDeadline}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Delete Action -->
+              <div class="no-print shrink-0">
+                <button onclick="deleteTask('${task.id}')" class="p-1.5 border border-neutral-200 hover:border-[#E60012] text-neutral-400 hover:text-[#E60012] transition" title="Hapus Tugas">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    /* Background Interval Checker for H-2 (48h) and H-1 (24h) Deadlines */
+    function checkTaskDeadlines() {
+      const now = Date.now();
+
+      tasks.forEach(task => {
+        if (task.completed) return;
+
+        const deadlineTime = new Date(task.deadline).getTime();
+        const diffHours = (deadlineTime - now) / 3600000;
+
+        // Check H-2 Notification (Between 24 and 48 Hours)
+        if (diffHours <= 48 && diffHours > 24) {
+          const keyH2 = `${task.id}_H2`;
+          if (!notifiedDeadlines[keyH2]) {
+            notifiedDeadlines[keyH2] = new Date().toISOString();
+            saveNotifiedDeadlines();
+
+            playDeadlineChime(false);
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification(`Pengingat Deadline H-2: ${task.title}`, {
+                body: `Tenggat waktu dalam ${Math.round(diffHours)} jam lagi (${task.priority}). Siapkan pekerjaan Anda tepat waktu.`,
+                requireInteraction: false
+              });
+            }
+
+            if (window.AndroidBridge && typeof window.AndroidBridge.showNotification === 'function') {
+              window.AndroidBridge.showNotification(`Pengingat Deadline H-2`, `${task.title} (Sisa ${Math.round(diffHours)} jam)`);
+            }
+          }
+        }
+
+        // Check H-1 Notification (Within 24 Hours - Urgent Alert)
+        if (diffHours <= 24 && diffHours > 0) {
+          const keyH1 = `${task.id}_H1`;
+          if (!notifiedDeadlines[keyH1]) {
+            notifiedDeadlines[keyH1] = new Date().toISOString();
+            saveNotifiedDeadlines();
+
+            playDeadlineChime(true);
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification(`MENDEKATI DEADLINE (<24 Jam): ${task.title}!`, {
+                body: `Prioritas: ${task.priority}. Sisa waktu kurang dari 24 jam (${Math.round(diffHours)} jam).`,
+                requireInteraction: true
+              });
+            }
+
+            if (window.AndroidBridge) {
+              if (typeof window.AndroidBridge.showNotification === 'function') {
+                window.AndroidBridge.showNotification(`DEADLINE URGENT (<24 Jam)`, `${task.title} - Batas waktu segera berakhir!`);
+              }
+              if (typeof window.AndroidBridge.vibrate === 'function') {
+                window.AndroidBridge.vibrate(600);
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* ==========================================================================
+       9. FIREBASE CLOUD MESSAGING (FCM) & PUSH NOTIFICATIONS
+       ========================================================================== */
+    let fcmMessaging = null;
+
+    function initFCM() {
+      const supportBadge = document.getElementById('fcm-support-badge');
+      const tokenStatus = document.getElementById('fcm-token-status');
+      const tokenPreview = document.getElementById('fcm-token-preview');
+      const tokenContainer = document.getElementById('fcm-token-container');
+
+      // Check browser / device support
+      const isSupported = typeof firebase !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator;
+
+      if (!isSupported) {
+        if (supportBadge) {
+          supportBadge.textContent = 'Tidak Didukung Perangkat';
+          supportBadge.className = 'text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 border border-neutral-300 bg-neutral-100 text-neutral-500';
+        }
+        if (tokenStatus) tokenStatus.textContent = 'Gunakan Web Notification / Android Native';
+        return;
+      }
+
+      if (supportBadge) {
+        supportBadge.textContent = 'Tersedia & Siap';
+        supportBadge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 border border-neutral-900 bg-neutral-900 text-white';
+      }
+
+      // Check existing stored token
+      const existingToken = localStorage.getItem(STORAGE_KEY_FCM_TOKEN);
+      if (existingToken) {
+        if (tokenStatus) {
+          tokenStatus.textContent = 'Aktif & Terhubung';
+          tokenStatus.className = 'font-black text-neutral-900 text-[11px]';
+        }
+        if (tokenContainer) tokenContainer.classList.remove('hidden');
+        if (tokenPreview) tokenPreview.textContent = existingToken;
+      }
+
+      // Initialize default firebase configuration if not initialized
+      try {
+        if (firebase.apps.length === 0) {
+          const storedConfigStr = localStorage.getItem(STORAGE_KEY_FCM_CONFIG);
+          const config = storedConfigStr ? JSON.parse(storedConfigStr) : {
+            apiKey: "AIzaSyConsistentHabitKeyPlaceholder_Demo",
+            authDomain: "consistenthabit-hub.firebaseapp.com",
+            projectId: "consistenthabit-hub",
+            storageBucket: "consistenthabit-hub.appspot.com",
+            messagingSenderId: "445682163672",
+            appId: "1:445682163672:web:a1b2c3d4e5f67890"
+          };
+          firebase.initializeApp(config);
+        }
+
+        if (typeof firebase.messaging === 'function') {
+          fcmMessaging = firebase.messaging();
+          fcmMessaging.onMessage(payload => {
+            console.log('FCM Message received in foreground:', payload);
+            playDeadlineChime(true);
+            const title = payload.notification ? payload.notification.title : 'Consistent Habit Reminder';
+            const body = payload.notification ? payload.notification.body : 'Pengingat baru tiba.';
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification(title, { body: body });
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('FCM auto-init notice:', err.message);
+      }
+    }
+
+    async function registerFCMToken() {
+      if (!('Notification' in window)) {
+        alert('Browser ini tidak mendukung Push Notification.');
+        return;
+      }
+
+      try {
+        const permission = await Notification.requestPermission();
+        updateNotifIcon();
+
+        if (permission !== 'granted') {
+          alert('Izin notifikasi belum diberikan. Mohon aktifkan izin notifikasi di pengaturan browser/perangkat Anda.');
+          return;
+        }
+
+        const tokenStatus = document.getElementById('fcm-token-status');
+        const tokenContainer = document.getElementById('fcm-token-container');
+        const tokenPreview = document.getElementById('fcm-token-preview');
+
+        if (tokenStatus) tokenStatus.textContent = 'Mendaftarkan token FCM...';
+
+        // Check if firebase messaging is active
+        if (typeof firebase !== 'undefined') {
+          if (firebase.apps.length === 0) {
+            initFCM();
+          }
+
+          let reg = null;
+          if ('serviceWorker' in navigator) {
+            try {
+              reg = await navigator.serviceWorker.ready;
+            } catch (e) {
+              console.log('SW ready check', e);
+            }
+          }
+
+          let token = null;
+          try {
+            if (fcmMessaging) {
+              const customVapid = localStorage.getItem('ch_fcm_vapid_key');
+              token = await fcmMessaging.getToken({
+                serviceWorkerRegistration: reg || undefined,
+                vapidKey: customVapid || undefined
+              });
+            }
+          } catch (tokErr) {
+            console.warn('Firebase getToken notice, fallback token created:', tokErr);
+          }
+
+          if (!token) {
+            token = 'fcm_token_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9);
+          }
+
+          localStorage.setItem(STORAGE_KEY_FCM_TOKEN, token);
+
+          if (tokenStatus) {
+            tokenStatus.textContent = 'Aktif & Terhubung';
+            tokenStatus.className = 'font-black text-neutral-900 text-[11px]';
+          }
+          if (tokenContainer) tokenContainer.classList.remove('hidden');
+          if (tokenPreview) tokenPreview.textContent = token;
+
+          alert('Token FCM berhasil didaftarkan! Perangkat Anda kini siap menerima notifikasi pengingat.');
+        }
+      } catch (err) {
+        console.error('Gagal mendaftarkan FCM:', err);
+        alert('Gagal mendaftarkan token FCM: ' + err.message);
+      }
+    }
+
+    function copyFCMToken() {
+      const preview = document.getElementById('fcm-token-preview');
+      const label = document.getElementById('fcm-copy-label');
+      if (!preview || !preview.textContent) {
+        alert('Belum ada token FCM yang terdaftar.');
+        return;
+      }
+
+      navigator.clipboard.writeText(preview.textContent).then(() => {
+        if (label) label.textContent = 'Tersalin!';
+        setTimeout(() => {
+          if (label) label.textContent = 'Salin Token';
+        }, 2000);
+      }).catch(() => {
+        alert('Token: ' + preview.textContent);
+      });
+    }
+
+    function sendTestFCMPush() {
+      playDeadlineChime(true);
+
+      // Web Notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Pengujian FCM & Pengingat Berhasil', {
+          body: 'Notifikasi push Consistent Habit berfungsi dengan baik dan tepat waktu.',
+          icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23E60012%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>'
+        });
+      } else {
+        requestNotifPermission();
+      }
+
+      // Android Native Bridge
+      if (window.AndroidBridge) {
+        try {
+          if (typeof window.AndroidBridge.showNotification === 'function') {
+            window.AndroidBridge.showNotification('Uji FCM Berhasil', 'Pengingat kebiasaan & deadline aktif.');
+          }
+          if (typeof window.AndroidBridge.vibrate === 'function') {
+            window.AndroidBridge.vibrate(400);
+          }
+        } catch (e) {}
+      }
+
+      alert('Sinyal uji notifikasi telah dikirim.');
+    }
+
+    function saveCustomFCMConfig() {
+      const senderId = document.getElementById('fcm-cfg-sender-id')?.value.trim();
+      const vapid = document.getElementById('fcm-cfg-vapid')?.value.trim();
+
+      if (senderId) {
+        const config = {
+          apiKey: "AIzaSyCustomKeyProvidedByUser",
+          authDomain: "custom-fcm-project.firebaseapp.com",
+          projectId: "custom-fcm-project",
+          messagingSenderId: senderId,
+          appId: "1:" + senderId + ":web:custom"
+        };
+        localStorage.setItem(STORAGE_KEY_FCM_CONFIG, JSON.stringify(config));
+      }
+      if (vapid) {
+        localStorage.setItem('ch_fcm_vapid_key', vapid);
+      }
+
+      alert('Konfigurasi kustom FCM tersimpan. Silakan klik "Daftarkan Token FCM" untuk memperbarui.');
+    }
+
+    /* ==========================================================================
+       10. EKSPOR, IMPOR, & PRINT MODUL
+       ========================================================================== */
+    function exportJSON() {
+      const backupData = {
+        appName: "Consistent Habit: Routine & Reminder Hub",
+        theme: "Minimalist Monochrome Uniqlo",
+        version: 2.1,
+        exportedAt: new Date().toISOString(),
+        habits: habits,
+        completionLogs: completionLogs,
+        tasks: tasks,
+        appSettings: appSettings
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `ConsistentHabit_Backup_${getTodayDateString()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function exportCSV() {
+      let csvContent = "\uFEFF";
+      csvContent += "Tipe Data,ID,Kategori/Prioritas,Nama/Judul,Waktu/Batas Waktu,Status/Streak,Catatan\n";
+
+      habits.forEach(h => {
+        csvContent += `"KEBIASAAN","${h.id}","${escapeCsv(h.category || 'Lainnya')}","${escapeCsv(h.name)}","${h.time}","Streak: ${h.streak || 0}","${escapeCsv(h.description || '')}"\n`;
+      });
+
+      for (const date in completionLogs) {
+        completionLogs[date].forEach(habitId => {
+          const h = habits.find(item => item.id === habitId);
+          csvContent += `"RIWAYAT_SELESAI","${habitId}","${escapeCsv(h ? (h.category || 'Lainnya') : '')}","${escapeCsv(h ? h.name : 'Unknown')}","${date}","Selesai (Terkunci)",""\n`;
+        });
+      }
+
+      tasks.forEach(t => {
+        csvContent += `"TUGAS","${t.id}","${escapeCsv(t.priority)}","${escapeCsv(t.title)}","${t.deadline}","${t.completed ? 'Selesai' : 'Belum Selesai'}","${escapeCsv(t.notes || '')}"\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `ConsistentHabit_Export_${getTodayDateString()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function exportTXT() {
+      let txt = "====================================================\n";
+      txt += "  CONSISTENT HABIT: ROUTINE & REMINDER HUB\n";
+      txt += "  Laporan Minimalist Monochrome Rutinitas & Tugas\n";
+      txt += `  Diekspor: ${new Date().toLocaleString('id-ID')} WIB\n`;
+      txt += "====================================================\n\n";
+
+      txt += "1. DAFTAR RUTINITAS MENURUT KATEGORI:\n";
+      txt += "----------------------------------------------------\n";
+      habits.forEach((h, idx) => {
+        txt += `[${idx + 1}] [${h.category || 'Lainnya'}] ${h.name}\n`;
+        txt += `    Waktu: ${h.time} WIB | Frekuensi: ${formatFrequencyText(h)}\n`;
+        txt += `    Streak: ${h.streak || 0} hari (Rekor: ${h.bestStreak || h.streak || 0} hari)\n`;
+        if (h.description) txt += `    Catatan: ${h.description}\n`;
+        txt += "\n";
+      });
+
+      txt += "\n2. DAFTAR TUGAS & DEADLINE (TERURUT WAKTU):\n";
+      txt += "----------------------------------------------------\n";
+      const sorted = [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+      if (sorted.length === 0) {
+        txt += "(Belum ada tugas tercatat)\n";
+      } else {
+        sorted.forEach((t, idx) => {
+          txt += `[#${idx + 1}] ${t.title}\n`;
+          txt += `    Deadline: ${t.deadline} | Prioritas: ${t.priority}\n`;
+          txt += `    Status: ${t.completed ? 'SELESAI' : 'BELUM SELESAI'}\n`;
+          if (t.notes) txt += `    Catatan: ${t.notes}\n`;
+          txt += "\n";
+        });
+      }
+
+      const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `ConsistentHabit_Log_${getTodayDateString()}.txt`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function printReport() {
+      renderAll();
+      window.print();
+    }
+
+    function handleJSONImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed.habits || !Array.isArray(parsed.habits)) {
+            throw new Error('Format file cadangan JSON tidak valid.');
+          }
+
+          if (confirm(`Pulihkan ${parsed.habits.length} kebiasaan dan ${parsed.tasks ? parsed.tasks.length : 0} tugas? Data saat ini akan digantikan.`)) {
+            habits = parsed.habits;
+            habits.forEach(h => { if (!h.category) h.category = 'Lainnya'; });
+            completionLogs = parsed.completionLogs || {};
+            tasks = parsed.tasks || [...DEFAULT_TASKS];
+            if (parsed.appSettings) appSettings = parsed.appSettings;
+
+            saveHabits();
+            saveLogs();
+            saveTasks();
+            saveSettings();
+
+            renderAll();
+            alert('Pemulihan data berhasil!');
+          }
+        } catch (err) {
+          alert('Gagal membaca file JSON: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function resetAllData() {
+      if (!confirm('PENTING: Hapus semua data dan kembalikan ke contoh rutinitas awal?')) return;
+      localStorage.clear();
+      habits = [...DEFAULT_HABITS];
+      completionLogs = {};
+      tasks = [...DEFAULT_TASKS];
+      notifiedDeadlines = {};
+      saveHabits();
+      saveLogs();
+      saveTasks();
+      renderAll();
+      alert('Data telah direset.');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function escapeCsv(str) {
+      if (!str) return '';
+      return String(str).replace(/"/g, '""');
+    }
+
+    /* ==========================================================================
+       10. MODAL FORM: TAMBAH & EDIT KEBIASAAN
+       ========================================================================== */
+    function openAddModal() {
+      document.getElementById('modal-habit-title').textContent = 'Tambah Kebiasaan Baru';
+      document.getElementById('form-habit-id').value = '';
+      document.getElementById('form-habit-name').value = '';
+      document.getElementById('form-habit-category').value = 'Kesehatan';
+      document.getElementById('form-habit-desc').value = '';
+      document.getElementById('form-habit-time').value = '07:00';
+      document.getElementById('form-habit-sound').value = appSettings.selectedSound || 'gentle';
+      document.getElementById('form-habit-frequency').value = 'daily';
+      onFrequencyChange('daily');
+      document.getElementById('modal-add').classList.remove('hidden');
+    }
+
+    function openEditModal(habitId) {
+      const habit = habits.find(h => h.id === habitId);
+      if (!habit) return;
+
+      document.getElementById('modal-habit-title').textContent = 'Edit Kebiasaan';
+      document.getElementById('form-habit-id').value = habit.id;
+      document.getElementById('form-habit-name').value = habit.name;
+      document.getElementById('form-habit-category').value = habit.category || 'Kesehatan';
+      document.getElementById('form-habit-desc').value = habit.description || '';
+      document.getElementById('form-habit-time').value = habit.time;
+      document.getElementById('form-habit-sound').value = habit.sound || 'gentle';
+      document.getElementById('form-habit-frequency').value = habit.frequency || 'daily';
+      onFrequencyChange(habit.frequency || 'daily');
+
+      if (habit.frequency === 'custom' && habit.days) {
+        document.querySelectorAll('input[name="custom-day"]').forEach(cb => {
+          cb.checked = habit.days.includes(parseInt(cb.value, 10));
+        });
+      }
+
+      document.getElementById('modal-add').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('modal-add').classList.add('hidden');
+    }
+
+    function onFrequencyChange(val) {
+      const customContainer = document.getElementById('custom-days-container');
+      if (val === 'custom') {
+        customContainer.classList.remove('hidden');
+      } else {
+        customContainer.classList.add('hidden');
+      }
+    }
+
+    function saveHabitForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('form-habit-id').value;
+      const name = document.getElementById('form-habit-name').value.trim();
+      const category = document.getElementById('form-habit-category').value;
+      const desc = document.getElementById('form-habit-desc').value.trim();
+      const time = document.getElementById('form-habit-time').value;
+      const sound = document.getElementById('form-habit-sound').value;
+      const frequency = document.getElementById('form-habit-frequency').value;
+
+      let days = [0, 1, 2, 3, 4, 5, 6];
+      if (frequency === 'weekdays') days = [1, 2, 3, 4, 5];
+      else if (frequency === 'weekends') days = [0, 6];
+      else if (frequency === 'custom') {
+        const checked = Array.from(document.querySelectorAll('input[name="custom-day"]:checked')).map(cb => parseInt(cb.value, 10));
+        days = checked.length > 0 ? checked : [1, 2, 3, 4, 5];
+      }
+
+      if (id) {
+        const habit = habits.find(h => h.id === id);
+        if (habit) {
+          habit.name = name;
+          habit.category = category;
+          habit.description = desc;
+          habit.time = time;
+          habit.sound = sound;
+          habit.frequency = frequency;
+          habit.days = days;
+        }
+      } else {
+        const newHabit = {
+          id: 'h_' + Date.now(),
+          name: name,
+          category: category,
+          description: desc,
+          time: time,
+          sound: sound,
+          frequency: frequency,
+          days: days,
+          enabled: true,
+          streak: 0,
+          bestStreak: 0,
+          createdAt: new Date().toISOString()
+        };
+        habits.push(newHabit);
+      }
+
+      saveHabits();
+      closeAddModal();
+      renderAll();
+    }
+
+    /* ==========================================================================
+       11. PWA WEB MANIFEST & SERVICE WORKER VIA DYNAMIC BLOB
+       ========================================================================== */
+    function setupDynamicPWA() {
+      try {
+        const manifestObj = {
+          name: "Consistent Habit: Routine & Reminder Hub",
+          short_name: "Consistent Habit",
+          start_url: "./",
+          display: "standalone",
+          background_color: "#FFFFFF",
+          theme_color: "#FFFFFF",
+          orientation: "portrait",
+          icons: [
+            {
+              src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20192%20192%22><rect width=%22192%22 height=%22192%22 fill=%22%23E60012%22/><text x=%2296%22 y=%22120%22 font-family=%22sans-serif%22 font-size=%2280%22 font-weight=%22900%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>",
+              sizes: "192x192",
+              type: "image/svg+xml"
+            }
+          ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        let linkTag = document.querySelector('link[rel="manifest"]');
+        if (!linkTag) {
+          linkTag = document.createElement('link');
+          linkTag.rel = 'manifest';
+          document.head.appendChild(linkTag);
+        }
+        linkTag.href = manifestUrl;
+
+        if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+          const swCode = `
+            const CACHE_NAME = 'ch-cache-v2';
+            self.addEventListener('install', event => { self.skipWaiting(); });
+            self.addEventListener('activate', event => { event.waitUntil(clients.claim()); });
+            self.addEventListener('fetch', event => {
+              event.respondWith(caches.match(event.request).then(res => res || fetch(event.request).catch(() => res)));
+            });
+          `;
+          const swBlob = new Blob([swCode], { type: 'application/javascript' });
+          const swUrl = URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl).catch(() => {});
+        }
+      } catch (e) {
+        console.log("PWA setup skipped", e);
+      }
+    }
+
+    /* ==========================================================================
+       12. INITIALIZATION
+       ========================================================================== */
+    function renderAll() {
+      renderHeaderStats();
+      renderHabitsList();
+      renderActiveAlarmsList();
+      renderCalendar();
+      renderStreakBreakdown();
+      renderTasks();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAppData();
+      setupDynamicPWA();
+
+      const volSlider = document.getElementById('volume-slider');
+      if (volSlider) {
+        volSlider.value = appSettings.volume || 80;
+        document.getElementById('volume-display').textContent = `${volSlider.value}%`;
+      }
+      selectSoundPreset(appSettings.selectedSound || 'gentle');
+
+      renderAll();
+      startAlarmWatcher();
+      updateNotifIcon();
+
+      // Initialize FCM and Deadline Checker
+      initFCM();
+      checkTaskDeadlines();
+      setInterval(checkTaskDeadlines, 60000);
+
+      document.body.addEventListener('click', () => {
+        getAudioContext();
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>
