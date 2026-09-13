@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>MonoRoutine</title>
-  <meta name="description" content="MonoRoutine — Minimalist Monochrome Routine & Task Hub ala Uniqlo" />
-  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="description" content="MonoRoutine — Minimalist Monochrome Routine & Task Hub" />
+  <meta name="theme-color" content="#171717" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MonoRoutine" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23171717%22%2F%3E%3Ccircle%20cx%3D%22256%22%20cy%3D%22115%22%20r%3D%2232%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2212%22%2F%3E%3Cpolyline%20points%3D%22256%2C97%20256%2C115%20272%2C115%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20105%20390%20L%20105%20220%20L%20169%20310%20L%20233%20220%20L%20233%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20287%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20347%20220%20C%20387%20220%20407%20242%20407%20280%20C%20407%20318%20387%20340%20347%20340%20L%20287%20340%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20342%20340%20L%20402%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23171717%22%2F%3E%3Ccircle%20cx%3D%22256%22%20cy%3D%22115%22%20r%3D%2232%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2212%22%2F%3E%3Cpolyline%20points%3D%22256%2C97%20256%2C115%20272%2C115%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20105%20390%20L%20105%20220%20L%20169%20310%20L%20233%20220%20L%20233%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20287%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20347%20220%20C%20387%20220%20407%20242%20407%20280%20C%20407%20318%20387%20340%20347%20340%20L%20287%20340%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20342%20340%20L%20402%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E" />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -115,39 +117,36 @@
 </head>
 <body class="h-full bg-[#F7F7F7] text-neutral-900 font-sans antialiased select-none overflow-x-hidden flex flex-col">
 
-  <!-- TOP APP BAR (Uniqlo Minimalist Aesthetic) -->
+  <!-- TOP APP BAR (Minimalist Monochrome Aesthetic) -->
   <header class="no-print sticky top-0 z-30 bg-white border-b border-neutral-200 px-4 py-3 pt-safe">
     <div class="max-w-2xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <!-- MonoRoutine Monogram "M" Checkmark Logo Badge -->
-        <div class="w-9 h-9 bg-neutral-900 flex items-center justify-center p-1.5 border border-neutral-900 shrink-0" title="MonoRoutine">
-          <svg class="w-full h-full text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 18 80 L 38 38 L 52 64 L 84 18" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M 60 52 L 80 80" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+        <!-- Minimalist Monochrome MR Logo Box -->
+        <div class="w-8 h-8 sm:w-9 sm:h-9 bg-neutral-900 text-white flex items-center justify-center font-bold text-sm tracking-tight rounded-md shrink-0 shadow-none select-none" title="MonoRoutine">
+          <span>MR</span>
         </div>
         <div>
-          <h1 class="text-sm font-black tracking-wider text-neutral-900 uppercase leading-none">MonoRoutine</h1>
-          <p class="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mt-0.5">TASK MANAGER</p>
+          <h1 class="text-sm sm:text-base font-black tracking-wider text-neutral-900 uppercase leading-none">MONOROUTINE</h1>
+          <p class="text-[10px] text-neutral-500 font-medium tracking-widest uppercase mt-0.5">ROUTINE &amp; DEADLINE HUB</p>
         </div>
       </div>
 
       <!-- Header Action Controls -->
       <div class="flex items-center space-x-2">
         <!-- Emergency Alarm Stop Button (shown when ringing) -->
-        <button id="header-stop-alarm-btn" onclick="emergencyStopAlarm()" class="hidden pulse-alarm px-2.5 py-1.5 border border-[#E60012] text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition" title="Hentikan Alarm Sekarang">
+        <button id="header-stop-alarm-btn" onclick="emergencyStopAlarm()" class="hidden pulse-alarm px-2.5 py-1.5 border border-[#E60012] text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition rounded-md" title="Hentikan Alarm Sekarang">
           <i data-lucide="bell-off" class="w-3.5 h-3.5"></i>
           <span>Matikan Alarm</span>
         </button>
 
         <!-- Wake Lock Status Button -->
-        <button id="wakeLockBtn" onclick="toggleWakeLock()" class="flex items-center space-x-1.5 px-2.5 py-1.5 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold transition" title="Jaga Layar Aktif">
+        <button id="wakeLockBtn" onclick="toggleWakeLock()" class="flex items-center space-x-1.5 px-2.5 py-1.5 border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold rounded-md transition" title="Jaga Layar Aktif">
           <i data-lucide="sun" id="wakeLockIcon" class="w-3.5 h-3.5 text-neutral-500"></i>
           <span id="wakeLockLabel" class="hidden sm:inline">Layar Aktif: Mati</span>
         </button>
 
         <!-- Notification Permission Button -->
-        <button id="notifBtn" onclick="requestNotifPermission()" class="p-2 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 transition" title="Izinkan Notifikasi">
+        <button id="notifBtn" onclick="requestNotifPermission()" class="p-2 border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 rounded-md transition" title="Izinkan Notifikasi">
           <i data-lucide="bell" id="notifIcon" class="w-4 h-4 text-neutral-600"></i>
         </button>
       </div>
@@ -951,8 +950,83 @@
     const STORAGE_KEY_FCM_TOKEN = 'ch_fcm_token_v1';
     const STORAGE_KEY_NOTIFIED_DEADLINES = 'ch_notified_deadlines_v1';
 
-    // Monochrome MonoRoutine Monogram "M" Checkmark Vector Icon (192x192 SVG Data URI)
-    const MONOROUTINE_ICON_SVG = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23171717'/><path d='M 35 154 L 73 73 L 100 123 L 161 35' stroke='white' stroke-width='21' stroke-linecap='round' stroke-linejoin='round' fill='none'/><path d='M 115 100 L 154 154' stroke='white' stroke-width='21' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>";
+    // Monochrome MonoRoutine Monogram "MR" with Clock Symbol Vector (512x512 SVG Data URI)
+    const MONOROUTINE_ICON_SVG = "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23171717%22%2F%3E%3Ccircle%20cx%3D%22256%22%20cy%3D%22115%22%20r%3D%2232%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2212%22%2F%3E%3Cpolyline%20points%3D%22256%2C97%20256%2C115%20272%2C115%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20105%20390%20L%20105%20220%20L%20169%20310%20L%20233%20220%20L%20233%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20287%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20347%20220%20C%20387%20220%20407%20242%20407%20280%20C%20407%20318%20387%20340%20347%20340%20L%20287%20340%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20342%20340%20L%20402%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E";
+
+    // Synchronous High-Resolution Monochrome PNG Generator via Canvas
+    function generateMonoRoutinePngDataUri() {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return MONOROUTINE_ICON_SVG;
+
+        // Black square background #171717 with subtle rounded corners
+        ctx.fillStyle = '#171717';
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(0, 0, 512, 512, 96);
+          ctx.fill();
+        } else {
+          ctx.fillRect(0, 0, 512, 512);
+        }
+
+        // Minimalist Clock Accent Symbol
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 12;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.arc(256, 115, 32, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(256, 97);
+        ctx.lineTo(256, 115);
+        ctx.lineTo(272, 115);
+        ctx.stroke();
+
+        // Bold "MR" Monogram Vector Lines
+        ctx.lineWidth = 32;
+        ctx.strokeStyle = '#FFFFFF';
+
+        // M
+        ctx.beginPath();
+        ctx.moveTo(105, 390);
+        ctx.lineTo(105, 220);
+        ctx.lineTo(169, 310);
+        ctx.lineTo(233, 220);
+        ctx.lineTo(233, 390);
+        ctx.stroke();
+
+        // R stem
+        ctx.beginPath();
+        ctx.moveTo(287, 220);
+        ctx.lineTo(287, 390);
+        ctx.stroke();
+
+        // R bowl
+        ctx.beginPath();
+        ctx.moveTo(287, 220);
+        ctx.lineTo(347, 220);
+        ctx.bezierCurveTo(387, 220, 407, 242, 407, 280);
+        ctx.bezierCurveTo(407, 318, 387, 340, 347, 340);
+        ctx.lineTo(287, 340);
+        ctx.stroke();
+
+        // R leg
+        ctx.beginPath();
+        ctx.moveTo(342, 340);
+        ctx.lineTo(402, 390);
+        ctx.stroke();
+
+        return canvas.toDataURL('image/png');
+      } catch (e) {
+        return MONOROUTINE_ICON_SVG;
+      }
+    }
 
     // Default Starter Tasks for Task & Deadline Manager
     const DEFAULT_TASKS = [
@@ -2778,19 +2852,48 @@
        ========================================================================== */
     function setupDynamicPWA() {
       try {
+        const pngIcon = generateMonoRoutinePngDataUri();
+        const svgIcon = MONOROUTINE_ICON_SVG;
+
+        // Ensure apple-touch-icon and standard icon links reference the new monochrome icon
+        let linkApple = document.querySelector('link[rel="apple-touch-icon"]');
+        if (!linkApple) {
+          linkApple = document.createElement('link');
+          linkApple.rel = 'apple-touch-icon';
+          document.head.appendChild(linkApple);
+        }
+        linkApple.href = pngIcon;
+
+        let linkFaviconPng = document.querySelector('link[rel="icon"][type="image/png"]');
+        if (!linkFaviconPng) {
+          linkFaviconPng = document.createElement('link');
+          linkFaviconPng.rel = 'icon';
+          linkFaviconPng.type = 'image/png';
+          linkFaviconPng.setAttribute('sizes', '512x512');
+          document.head.appendChild(linkFaviconPng);
+        }
+        linkFaviconPng.href = pngIcon;
+
         const manifestObj = {
           name: "MonoRoutine",
           short_name: "MonoRoutine",
           start_url: "./",
           display: "standalone",
-          background_color: "#FFFFFF",
-          theme_color: "#FFFFFF",
+          background_color: "#ffffff",
+          theme_color: "#171717",
           orientation: "portrait",
           icons: [
             {
-              src: MONOROUTINE_ICON_SVG,
-              sizes: "192x192",
-              type: "image/svg+xml"
+              src: pngIcon,
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "any maskable"
+            },
+            {
+              src: svgIcon,
+              sizes: "192x192 512x512",
+              type: "image/svg+xml",
+              purpose: "any"
             }
           ]
         };
@@ -2807,7 +2910,7 @@
 
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
           const swCode = `
-            const CACHE_NAME = 'monoroutine-cache-v3';
+            const CACHE_NAME = 'monoroutine-cache-v4';
             self.addEventListener('install', event => { self.skipWaiting(); });
             self.addEventListener('activate', event => { event.waitUntil(clients.claim()); });
             self.addEventListener('fetch', event => {
