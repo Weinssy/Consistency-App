@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Consistent Habit: Routine & Reminder Hub</title>
-  <meta name="description" content="Minimalist Monochrome Routine Tracker ala Uniqlo - Pelacak Kebiasaan, Kategori, Alarm Web Audio API Mandiri, Streak Counter & Jurnal" />
+  <title>MonoRoutine</title>
+  <meta name="description" content="MonoRoutine — Minimalist Monochrome Routine & Task Hub ala Uniqlo" />
   <meta name="theme-color" content="#FFFFFF" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Consistent Habit" />
+  <meta name="apple-mobile-web-app-title" content="MonoRoutine" />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,6 +29,15 @@
           },
           fontFamily: {
             sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          keyframes: {
+            fadeInTab: {
+              '0%': { opacity: '0', transform: 'translateY(5px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          },
+          animation: {
+            'fade-in': 'fadeInTab 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards',
           }
         }
       }
@@ -48,6 +57,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 
   <style>
+    @keyframes fadeInTab {
+      0% { opacity: 0; transform: translateY(5px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeInTab 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
     @keyframes pulseAlarm {
       0%, 100% { background-color: #111111; color: #FFFFFF; }
       50% { background-color: #E60012; color: #FFFFFF; }
@@ -103,13 +119,16 @@
   <header class="no-print sticky top-0 z-30 bg-white border-b border-neutral-200 px-4 py-3 pt-safe">
     <div class="max-w-2xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <!-- Uniqlo-inspired Red Badge Logo -->
-        <div class="w-9 h-9 bg-[#E60012] flex items-center justify-center text-white font-extrabold text-sm tracking-tighter shadow-none">
-          <span>CH</span>
+        <!-- MonoRoutine Monogram "M" Checkmark Logo Badge -->
+        <div class="w-9 h-9 bg-neutral-900 flex items-center justify-center p-1.5 border border-neutral-900 shrink-0" title="MonoRoutine">
+          <svg class="w-full h-full text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 18 80 L 38 38 L 52 64 L 84 18" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M 60 52 L 80 80" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </div>
         <div>
-          <h1 class="text-sm font-black tracking-wider text-neutral-900 uppercase leading-none">CONSISTENCY</h1>
-          <p class="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mt-0.5">Now or Never • Routine Hub</p>
+          <h1 class="text-sm font-black tracking-wider text-neutral-900 uppercase leading-none">MonoRoutine</h1>
+          <p class="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mt-0.5">TASK MANAGER</p>
         </div>
       </div>
 
@@ -160,8 +179,13 @@
   <!-- PRINT ONLY HEADER -->
   <div class="print-only p-6 pb-3 border-b border-neutral-300">
     <div class="flex items-center space-x-2 mb-2">
-      <div class="w-7 h-7 bg-[#E60012] text-white font-bold flex items-center justify-center text-xs">CH</div>
-      <h1 class="text-xl font-black tracking-wider text-neutral-900 uppercase">CONSISTENT HABIT - LAPORAN RUTINITAS</h1>
+      <div class="w-7 h-7 bg-neutral-900 flex items-center justify-center p-1 text-white shrink-0">
+        <svg class="w-full h-full text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 18 80 L 38 38 L 52 64 L 84 18" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 60 52 L 80 80" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <h1 class="text-xl font-black tracking-wider text-neutral-900 uppercase">MONOROUTINE BACKUP - LAPORAN RUTINITAS &amp; TUGAS</h1>
     </div>
     <p class="text-xs text-neutral-500" id="print-date-label">Dicetak pada: -</p>
   </div>
@@ -208,7 +232,7 @@
     </section>
 
     <!-- TAB 1: DAFTAR RUTINITAS / KEBIASAAN -->
-    <section id="tab-habits" class="tab-content space-y-3">
+    <section id="tab-habits" class="tab-content animate-fade-in space-y-3">
       <!-- Section Header -->
       <div class="flex items-center justify-between border-b border-neutral-200 pb-2">
         <div>
@@ -230,38 +254,38 @@
           <span>Filter Kategori</span>
           <span id="active-category-indicator" class="text-neutral-900">Semua Kategori</span>
         </div>
-        <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1 text-xs" id="category-filter-row">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="category-filter-row">
           <!-- Populated dynamically or static pills -->
-          <button onclick="setCategoryFilter('all')" data-cat="all" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-900 bg-neutral-900 text-white transition">
+          <button onclick="setCategoryFilter('all')" data-cat="all" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-900 bg-neutral-900 text-white transition">
             Semua
           </button>
-          <button onclick="setCategoryFilter('Kesehatan')" data-cat="Kesehatan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Kesehatan')" data-cat="Kesehatan" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Kesehatan
           </button>
-          <button onclick="setCategoryFilter('Pekerjaan')" data-cat="Pekerjaan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Pekerjaan')" data-cat="Pekerjaan" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Pekerjaan
           </button>
-          <button onclick="setCategoryFilter('Pribadi')" data-cat="Pribadi" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Pribadi')" data-cat="Pribadi" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Pribadi
           </button>
-          <button onclick="setCategoryFilter('Belajar')" data-cat="Belajar" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Belajar')" data-cat="Belajar" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Belajar
           </button>
-          <button onclick="setCategoryFilter('Keuangan')" data-cat="Keuangan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Keuangan')" data-cat="Keuangan" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Keuangan
           </button>
-          <button onclick="setCategoryFilter('Lainnya')" data-cat="Lainnya" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Lainnya')" data-cat="Lainnya" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Lainnya
           </button>
         </div>
       </div>
 
       <!-- BARIS STATUS FILTER (Hari Ini, Belum Selesai, Selesai) -->
-      <div class="no-print flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-1 text-[11px]">
-        <button onclick="setHabitFilter('all')" id="filter-btn-all" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-900 bg-neutral-900 text-white">Semua Status</button>
-        <button onclick="setHabitFilter('today')" id="filter-btn-today" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Jadwal Hari Ini</button>
-        <button onclick="setHabitFilter('pending')" id="filter-btn-pending" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Belum Selesai</button>
-        <button onclick="setHabitFilter('completed')" id="filter-btn-completed" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Selesai</button>
+      <div class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+        <button onclick="setHabitFilter('all')" id="filter-btn-all" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-900 bg-neutral-900 text-white transition">Semua Status</button>
+        <button onclick="setHabitFilter('today')" id="filter-btn-today" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Jadwal Hari Ini</button>
+        <button onclick="setHabitFilter('pending')" id="filter-btn-pending" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Belum Selesai</button>
+        <button onclick="setHabitFilter('completed')" id="filter-btn-completed" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Selesai</button>
       </div>
 
       <!-- Habit Cards List -->
@@ -596,12 +620,13 @@
       </form>
 
       <!-- Task Filter Pills -->
-      <div class="no-print flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-1 text-[11px]">
-        <button onclick="setTaskFilter('all')" id="task-filter-all" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-900 bg-neutral-900 text-white">Semua</button>
-        <button onclick="setTaskFilter('pending')" id="task-filter-pending" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Belum Selesai</button>
-        <button onclick="setTaskFilter('approaching')" id="task-filter-approaching" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-[#E60012] hover:border-neutral-400">&lt; 24 Jam (H-1)</button>
-        <button onclick="setTaskFilter('urgent')" id="task-filter-urgent" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Mendesak</button>
-        <button onclick="setTaskFilter('completed')" id="task-filter-completed" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Selesai</button>
+      <div class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+        <button onclick="setTaskFilter('all')" id="task-filter-all" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-900 bg-neutral-900 text-white transition">Semua</button>
+        <button onclick="setTaskFilter('pending')" id="task-filter-pending" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Belum Selesai</button>
+        <button onclick="setTaskFilter('approaching')" id="task-filter-approaching" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">&lt; 24 Jam</button>
+        <button onclick="setTaskFilter('h2')" id="task-filter-h2" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">&lt; 48 Jam</button>
+        <button onclick="setTaskFilter('urgent')" id="task-filter-urgent" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Mendesak</button>
+        <button onclick="setTaskFilter('completed')" id="task-filter-completed" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Selesai</button>
       </div>
 
       <!-- Task Items List (Sorted by Closest Deadline) -->
@@ -925,6 +950,9 @@
     const STORAGE_KEY_FCM_CONFIG = 'ch_fcm_config_v1';
     const STORAGE_KEY_FCM_TOKEN = 'ch_fcm_token_v1';
     const STORAGE_KEY_NOTIFIED_DEADLINES = 'ch_notified_deadlines_v1';
+
+    // Monochrome MonoRoutine Monogram "M" Checkmark Vector Icon (192x192 SVG Data URI)
+    const MONOROUTINE_ICON_SVG = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23171717'/><path d='M 35 154 L 73 73 L 100 123 L 161 35' stroke='white' stroke-width='21' stroke-linecap='round' stroke-linejoin='round' fill='none'/><path d='M 115 100 L 154 154' stroke='white' stroke-width='21' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>";
 
     // Default Starter Tasks for Task & Deadline Manager
     const DEFAULT_TASKS = [
@@ -1403,9 +1431,9 @@
       Notification.requestPermission().then(permission => {
         updateNotifIcon();
         if (permission === 'granted') {
-          new Notification('Consistent Habit Aktif', {
+          new Notification('MonoRoutine', {
             body: 'Pengingat dan alarm kebiasaan akan muncul tepat waktu.',
-            icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23E60012%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>'
+            icon: MONOROUTINE_ICON_SVG
           });
         }
       });
@@ -1506,8 +1534,9 @@
       // Web Notification
       if ('Notification' in window && Notification.permission === 'granted') {
         try {
-          new Notification(`Waktunya: ${habit.name}!`, {
-            body: `[${habit.category || 'Rutinitas'}] ${habit.time} WIB - ${habit.description || 'Buka Consistent Habit untuk mencatat streak hari ini!'}`,
+          new Notification(`MonoRoutine: Waktunya ${habit.name}!`, {
+            body: `[${habit.category || 'Rutinitas'}] ${habit.time} WIB - ${habit.description || 'Buka MonoRoutine untuk mencatat kegiatan hari ini!'}`,
+            icon: MONOROUTINE_ICON_SVG,
             requireInteraction: true
           });
         } catch (e) {
@@ -1655,9 +1684,16 @@
        6. UI RENDERING & FILTER MANAGEMENT (STATUS & KATEGORI)
        ========================================================================== */
     function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('animate-fade-in');
+      });
       const activeEl = document.getElementById(`tab-${tabId}`);
-      if (activeEl) activeEl.classList.remove('hidden');
+      if (activeEl) {
+        activeEl.classList.remove('hidden');
+        void activeEl.offsetWidth; // Force reflow for smooth keyframe trigger
+        activeEl.classList.add('animate-fade-in');
+      }
 
       document.querySelectorAll('.nav-item').forEach(btn => {
         btn.classList.remove('text-neutral-900', 'border-neutral-900');
@@ -1677,11 +1713,11 @@
       currentHabitFilter = filter;
       document.querySelectorAll('.filter-pill').forEach(btn => {
         btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
-        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
       });
       const target = document.getElementById(`filter-btn-${filter}`);
       if (target) {
-        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200');
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
         target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
       }
       renderHabitsList();
@@ -1692,11 +1728,11 @@
       currentCategoryFilter = category;
       document.querySelectorAll('.category-pill').forEach(btn => {
         btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
-        btn.classList.add('bg-white', 'text-neutral-700', 'border-neutral-200');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
       });
       const target = document.querySelector(`.category-pill[data-cat="${category}"]`);
       if (target) {
-        target.classList.remove('bg-white', 'text-neutral-700', 'border-neutral-200');
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
         target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
       }
 
@@ -2002,11 +2038,11 @@
       currentTaskFilter = filter;
       document.querySelectorAll('.task-filter-pill').forEach(btn => {
         btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
-        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
       });
       const target = document.getElementById(`task-filter-${filter}`);
       if (target) {
-        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200');
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
         target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
       }
       renderTasks();
@@ -2094,6 +2130,7 @@
         const diffHours = (new Date(task.deadline).getTime() - now) / 3600000;
         if (currentTaskFilter === 'pending') return !task.completed;
         if (currentTaskFilter === 'approaching') return !task.completed && diffHours <= 24 && diffHours > 0;
+        if (currentTaskFilter === 'h2') return !task.completed && diffHours <= 48 && diffHours > 0;
         if (currentTaskFilter === 'urgent') return !task.completed && (task.priority === 'Mendesak' || (diffHours <= 24 && diffHours > 0));
         if (currentTaskFilter === 'completed') return task.completed;
         return true;
@@ -2222,14 +2259,15 @@
             playDeadlineChime(false);
 
             if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification(`Pengingat Deadline H-2: ${task.title}`, {
+              new Notification(`MonoRoutine: Deadline H-2 (${task.title})`, {
                 body: `Tenggat waktu dalam ${Math.round(diffHours)} jam lagi (${task.priority}). Siapkan pekerjaan Anda tepat waktu.`,
+                icon: MONOROUTINE_ICON_SVG,
                 requireInteraction: false
               });
             }
 
             if (window.AndroidBridge && typeof window.AndroidBridge.showNotification === 'function') {
-              window.AndroidBridge.showNotification(`Pengingat Deadline H-2`, `${task.title} (Sisa ${Math.round(diffHours)} jam)`);
+              window.AndroidBridge.showNotification(`MonoRoutine: Deadline H-2`, `${task.title} (Sisa ${Math.round(diffHours)} jam)`);
             }
           }
         }
@@ -2244,8 +2282,9 @@
             playDeadlineChime(true);
 
             if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification(`MENDEKATI DEADLINE (<24 Jam): ${task.title}!`, {
+              new Notification(`MonoRoutine: MENDEKATI DEADLINE (<24 Jam): ${task.title}!`, {
                 body: `Prioritas: ${task.priority}. Sisa waktu kurang dari 24 jam (${Math.round(diffHours)} jam).`,
+                icon: MONOROUTINE_ICON_SVG,
                 requireInteraction: true
               });
             }
@@ -2307,10 +2346,10 @@
         if (firebase.apps.length === 0) {
           const storedConfigStr = localStorage.getItem(STORAGE_KEY_FCM_CONFIG);
           const config = storedConfigStr ? JSON.parse(storedConfigStr) : {
-            apiKey: "AIzaSyConsistentHabitKeyPlaceholder_Demo",
-            authDomain: "consistenthabit-hub.firebaseapp.com",
-            projectId: "consistenthabit-hub",
-            storageBucket: "consistenthabit-hub.appspot.com",
+            apiKey: "AIzaSyMonoRoutineKeyPlaceholder_Demo",
+            authDomain: "monoroutine-hub.firebaseapp.com",
+            projectId: "monoroutine-hub",
+            storageBucket: "monoroutine-hub.appspot.com",
             messagingSenderId: "445682163672",
             appId: "1:445682163672:web:a1b2c3d4e5f67890"
           };
@@ -2322,10 +2361,10 @@
           fcmMessaging.onMessage(payload => {
             console.log('FCM Message received in foreground:', payload);
             playDeadlineChime(true);
-            const title = payload.notification ? payload.notification.title : 'Consistent Habit Reminder';
+            const title = payload.notification ? payload.notification.title : 'MonoRoutine Reminder';
             const body = payload.notification ? payload.notification.body : 'Pengingat baru tiba.';
             if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification(title, { body: body });
+              new Notification(title, { body: body, icon: MONOROUTINE_ICON_SVG });
             }
           });
         }
@@ -2427,9 +2466,9 @@
 
       // Web Notification
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Pengujian FCM & Pengingat Berhasil', {
-          body: 'Notifikasi push Consistent Habit berfungsi dengan baik dan tepat waktu.',
-          icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23E60012%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>'
+        new Notification('MonoRoutine: Pengujian Notifikasi Berhasil', {
+          body: 'Notifikasi push MonoRoutine berfungsi dengan baik dan tepat waktu.',
+          icon: MONOROUTINE_ICON_SVG
         });
       } else {
         requestNotifPermission();
@@ -2476,7 +2515,7 @@
        ========================================================================== */
     function exportJSON() {
       const backupData = {
-        appName: "Consistent Habit: Routine & Reminder Hub",
+        appName: "MonoRoutine Backup",
         theme: "Minimalist Monochrome Uniqlo",
         version: 2.1,
         exportedAt: new Date().toISOString(),
@@ -2489,7 +2528,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `ConsistentHabit_Backup_${getTodayDateString()}.json`);
+      downloadAnchor.setAttribute("download", `MonoRoutine_Backup_${getTodayDateString()}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -2518,7 +2557,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `ConsistentHabit_Export_${getTodayDateString()}.csv`);
+      link.setAttribute("download", `MonoRoutine_Export_${getTodayDateString()}.csv`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -2526,7 +2565,7 @@
 
     function exportTXT() {
       let txt = "====================================================\n";
-      txt += "  CONSISTENT HABIT: ROUTINE & REMINDER HUB\n";
+      txt += "  MONOROUTINE BACKUP\n";
       txt += "  Laporan Minimalist Monochrome Rutinitas & Tugas\n";
       txt += `  Diekspor: ${new Date().toLocaleString('id-ID')} WIB\n`;
       txt += "====================================================\n\n";
@@ -2560,7 +2599,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `ConsistentHabit_Log_${getTodayDateString()}.txt`);
+      link.setAttribute("download", `MonoRoutine_Log_${getTodayDateString()}.txt`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -2740,8 +2779,8 @@
     function setupDynamicPWA() {
       try {
         const manifestObj = {
-          name: "Consistent Habit: Routine & Reminder Hub",
-          short_name: "Consistent Habit",
+          name: "MonoRoutine",
+          short_name: "MonoRoutine",
           start_url: "./",
           display: "standalone",
           background_color: "#FFFFFF",
@@ -2749,7 +2788,7 @@
           orientation: "portrait",
           icons: [
             {
-              src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20192%20192%22><rect width=%22192%22 height=%22192%22 fill=%22%23E60012%22/><text x=%2296%22 y=%22120%22 font-family=%22sans-serif%22 font-size=%2280%22 font-weight=%22900%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>",
+              src: MONOROUTINE_ICON_SVG,
               sizes: "192x192",
               type: "image/svg+xml"
             }
@@ -2768,7 +2807,7 @@
 
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
           const swCode = `
-            const CACHE_NAME = 'ch-cache-v2';
+            const CACHE_NAME = 'monoroutine-cache-v3';
             self.addEventListener('install', event => { self.skipWaiting(); });
             self.addEventListener('activate', event => { event.waitUntil(clients.claim()); });
             self.addEventListener('fetch', event => {

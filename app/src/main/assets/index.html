@@ -29,6 +29,15 @@
           },
           fontFamily: {
             sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          keyframes: {
+            fadeInTab: {
+              '0%': { opacity: '0', transform: 'translateY(5px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          },
+          animation: {
+            'fade-in': 'fadeInTab 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards',
           }
         }
       }
@@ -48,6 +57,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 
   <style>
+    @keyframes fadeInTab {
+      0% { opacity: 0; transform: translateY(5px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeInTab 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
     @keyframes pulseAlarm {
       0%, 100% { background-color: #111111; color: #FFFFFF; }
       50% { background-color: #E60012; color: #FFFFFF; }
@@ -208,7 +224,7 @@
     </section>
 
     <!-- TAB 1: DAFTAR RUTINITAS / KEBIASAAN -->
-    <section id="tab-habits" class="tab-content space-y-3">
+    <section id="tab-habits" class="tab-content animate-fade-in space-y-3">
       <!-- Section Header -->
       <div class="flex items-center justify-between border-b border-neutral-200 pb-2">
         <div>
@@ -230,38 +246,38 @@
           <span>Filter Kategori</span>
           <span id="active-category-indicator" class="text-neutral-900">Semua Kategori</span>
         </div>
-        <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1 text-xs" id="category-filter-row">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="category-filter-row">
           <!-- Populated dynamically or static pills -->
-          <button onclick="setCategoryFilter('all')" data-cat="all" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-900 bg-neutral-900 text-white transition">
+          <button onclick="setCategoryFilter('all')" data-cat="all" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-900 bg-neutral-900 text-white transition">
             Semua
           </button>
-          <button onclick="setCategoryFilter('Kesehatan')" data-cat="Kesehatan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Kesehatan')" data-cat="Kesehatan" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Kesehatan
           </button>
-          <button onclick="setCategoryFilter('Pekerjaan')" data-cat="Pekerjaan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Pekerjaan')" data-cat="Pekerjaan" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Pekerjaan
           </button>
-          <button onclick="setCategoryFilter('Pribadi')" data-cat="Pribadi" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Pribadi')" data-cat="Pribadi" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Pribadi
           </button>
-          <button onclick="setCategoryFilter('Belajar')" data-cat="Belajar" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Belajar')" data-cat="Belajar" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Belajar
           </button>
-          <button onclick="setCategoryFilter('Keuangan')" data-cat="Keuangan" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Keuangan')" data-cat="Keuangan" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Keuangan
           </button>
-          <button onclick="setCategoryFilter('Lainnya')" data-cat="Lainnya" class="category-pill px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 transition">
+          <button onclick="setCategoryFilter('Lainnya')" data-cat="Lainnya" class="category-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">
             Lainnya
           </button>
         </div>
       </div>
 
       <!-- BARIS STATUS FILTER (Hari Ini, Belum Selesai, Selesai) -->
-      <div class="no-print flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-1 text-[11px]">
-        <button onclick="setHabitFilter('all')" id="filter-btn-all" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-900 bg-neutral-900 text-white">Semua Status</button>
-        <button onclick="setHabitFilter('today')" id="filter-btn-today" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Jadwal Hari Ini</button>
-        <button onclick="setHabitFilter('pending')" id="filter-btn-pending" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Belum Selesai</button>
-        <button onclick="setHabitFilter('completed')" id="filter-btn-completed" class="filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Selesai</button>
+      <div class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+        <button onclick="setHabitFilter('all')" id="filter-btn-all" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-900 bg-neutral-900 text-white transition">Semua Status</button>
+        <button onclick="setHabitFilter('today')" id="filter-btn-today" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Jadwal Hari Ini</button>
+        <button onclick="setHabitFilter('pending')" id="filter-btn-pending" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Belum Selesai</button>
+        <button onclick="setHabitFilter('completed')" id="filter-btn-completed" class="filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Selesai</button>
       </div>
 
       <!-- Habit Cards List -->
@@ -596,12 +612,13 @@
       </form>
 
       <!-- Task Filter Pills -->
-      <div class="no-print flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-1 text-[11px]">
-        <button onclick="setTaskFilter('all')" id="task-filter-all" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-900 bg-neutral-900 text-white">Semua</button>
-        <button onclick="setTaskFilter('pending')" id="task-filter-pending" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Belum Selesai</button>
-        <button onclick="setTaskFilter('approaching')" id="task-filter-approaching" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-[#E60012] hover:border-neutral-400">&lt; 24 Jam (H-1)</button>
-        <button onclick="setTaskFilter('urgent')" id="task-filter-urgent" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Mendesak</button>
-        <button onclick="setTaskFilter('completed')" id="task-filter-completed" class="task-filter-pill px-2.5 py-1 font-semibold uppercase tracking-wider border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400">Selesai</button>
+      <div class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+        <button onclick="setTaskFilter('all')" id="task-filter-all" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-900 bg-neutral-900 text-white transition">Semua</button>
+        <button onclick="setTaskFilter('pending')" id="task-filter-pending" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Belum Selesai</button>
+        <button onclick="setTaskFilter('approaching')" id="task-filter-approaching" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">&lt; 24 Jam</button>
+        <button onclick="setTaskFilter('h2')" id="task-filter-h2" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">&lt; 48 Jam</button>
+        <button onclick="setTaskFilter('urgent')" id="task-filter-urgent" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Mendesak</button>
+        <button onclick="setTaskFilter('completed')" id="task-filter-completed" class="task-filter-pill h-9 px-3.5 flex items-center justify-center text-xs font-medium uppercase tracking-wider whitespace-nowrap shrink-0 border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 transition">Selesai</button>
       </div>
 
       <!-- Task Items List (Sorted by Closest Deadline) -->
@@ -1655,9 +1672,16 @@
        6. UI RENDERING & FILTER MANAGEMENT (STATUS & KATEGORI)
        ========================================================================== */
     function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('animate-fade-in');
+      });
       const activeEl = document.getElementById(`tab-${tabId}`);
-      if (activeEl) activeEl.classList.remove('hidden');
+      if (activeEl) {
+        activeEl.classList.remove('hidden');
+        void activeEl.offsetWidth; // Force reflow for smooth keyframe trigger
+        activeEl.classList.add('animate-fade-in');
+      }
 
       document.querySelectorAll('.nav-item').forEach(btn => {
         btn.classList.remove('text-neutral-900', 'border-neutral-900');
@@ -1677,11 +1701,11 @@
       currentHabitFilter = filter;
       document.querySelectorAll('.filter-pill').forEach(btn => {
         btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
-        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
       });
       const target = document.getElementById(`filter-btn-${filter}`);
       if (target) {
-        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200');
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
         target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
       }
       renderHabitsList();
@@ -1692,11 +1716,11 @@
       currentCategoryFilter = category;
       document.querySelectorAll('.category-pill').forEach(btn => {
         btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
-        btn.classList.add('bg-white', 'text-neutral-700', 'border-neutral-200');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
       });
       const target = document.querySelector(`.category-pill[data-cat="${category}"]`);
       if (target) {
-        target.classList.remove('bg-white', 'text-neutral-700', 'border-neutral-200');
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
         target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
       }
 
@@ -2002,11 +2026,11 @@
       currentTaskFilter = filter;
       document.querySelectorAll('.task-filter-pill').forEach(btn => {
         btn.classList.remove('bg-neutral-900', 'text-white', 'border-neutral-900');
-        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200');
+        btn.classList.add('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
       });
       const target = document.getElementById(`task-filter-${filter}`);
       if (target) {
-        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200');
+        target.classList.remove('bg-white', 'text-neutral-600', 'border-neutral-200', 'hover:bg-neutral-50');
         target.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
       }
       renderTasks();
@@ -2094,6 +2118,7 @@
         const diffHours = (new Date(task.deadline).getTime() - now) / 3600000;
         if (currentTaskFilter === 'pending') return !task.completed;
         if (currentTaskFilter === 'approaching') return !task.completed && diffHours <= 24 && diffHours > 0;
+        if (currentTaskFilter === 'h2') return !task.completed && diffHours <= 48 && diffHours > 0;
         if (currentTaskFilter === 'urgent') return !task.completed && (task.priority === 'Mendesak' || (diffHours <= 24 && diffHours > 0));
         if (currentTaskFilter === 'completed') return task.completed;
         return true;

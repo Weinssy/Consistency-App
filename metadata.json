@@ -1,6 +1,6 @@
 {
-  "name": "Consistent Habit",
-  "description": "Minimalist Monochrome Routine & Task Hub - Pelacak kebiasaan berkategori, validasi kunci selesai, alarm darurat, task & deadline manager (H-2 & H-1), serta integrasi FCM.",
+  "name": "MonoRoutine",
+  "description": "Minimalist Monochrome Habit & Task Manager - Rutinitas harian, tenggat waktu tugas (H-2 & H-1), alarm mandiri, dan pelacak konsistensi.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

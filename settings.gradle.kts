@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "ConsistentHabit"
+rootProject.name = "MonoRoutine"
 
 include(":app")
