@@ -38,8 +38,8 @@ import com.example.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
   companion object {
-    const val CHANNEL_ID = "consistent_habit_channel"
-    const val CHANNEL_NAME = "Consistent Habit Pengingat"
+    const val CHANNEL_ID = "monoroutine_channel"
+    const val CHANNEL_NAME = "MonoRoutine Pengingat"
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       MyApplicationTheme {
-        ConsistentHabitApp(this)
+        MonoRoutineApp(this)
       }
     }
   }
@@ -145,7 +145,7 @@ class AndroidBridge(private val context: Context) {
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun ConsistentHabitApp(context: Context) {
+fun MonoRoutineApp(context: Context) {
   var webViewInstance = remember<WebView?> { null }
 
   BackHandler(enabled = webViewInstance?.canGoBack() == true) {

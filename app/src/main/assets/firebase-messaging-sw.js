@@ -1,12 +1,12 @@
-// Firebase Cloud Messaging Service Worker for Consistent Habit (MonoRoutine)
+// Firebase Cloud Messaging Service Worker for MonoRoutine
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
 const defaultFirebaseConfig = {
-  apiKey: "AIzaSyD-sample_consistent_habit_key",
-  authDomain: "consistent-habit-app.firebaseapp.com",
-  projectId: "consistent-habit-app",
-  storageBucket: "consistent-habit-app.appspot.com",
+  apiKey: "AIzaSyD-sample_monoroutine_key",
+  authDomain: "monoroutine-app.firebaseapp.com",
+  projectId: "monoroutine-app",
+  storageBucket: "monoroutine-app.appspot.com",
   messagingSenderId: "445682163672",
   appId: "1:445682163672:web:a1b2c3d4e5f67890"
 };
@@ -17,11 +17,11 @@ try {
 
   messaging.onBackgroundMessage(function(payload) {
     console.log('[firebase-messaging-sw.js] Background message received:', payload);
-    const notificationTitle = payload.notification?.title || payload.data?.title || 'Consistent Habit Pengingat';
+    const notificationTitle = payload.notification?.title || payload.data?.title || 'MonoRoutine Pengingat';
     const notificationOptions = {
       body: payload.notification?.body || payload.data?.body || 'Waktunya menjalankan rutinitas atau menyelesaikan tugas Anda.',
-      icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23E60012%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>',
-      badge: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23111111%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>',
+      icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20512%20512%22><rect width=%22512%22 height=%22512%22 rx=%22100%22 fill=%22%23171717%22/><path d=%22M120%20392V120H184L256%20272L328%20120H392V392H336V224L268%20364H244L176%20224V392H120Z%22 fill=%22%23ffffff%22/><path d=%22M296%20330L348%20382L440%20286%22 stroke=%22%23ffffff%22 stroke-width=%2232%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22 fill=%22none%22/></svg>',
+      badge: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20512%20512%22><rect width=%22512%22 height=%22512%22 rx=%22100%22 fill=%22%23171717%22/><path d=%22M120%20392V120H184L256%20272L328%20120H392V392H336V224L268%20364H244L176%20224V392H120Z%22 fill=%22%23ffffff%22/></svg>',
       vibrate: [300, 100, 300, 100, 500],
       tag: payload.data?.tag || 'routine-deadline-alert',
       renotify: true,

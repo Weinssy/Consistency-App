@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Consistent Habit: Routine & Reminder Hub</title>
-  <meta name="description" content="Minimalist Monochrome Routine Tracker ala Uniqlo - Pelacak Kebiasaan, Kategori, Alarm Web Audio API Mandiri, Streak Counter & Jurnal" />
-  <meta name="theme-color" content="#FFFFFF" />
+  <title>MonoRoutine</title>
+  <meta name="description" content="MonoRoutine — Minimalist Monochrome Routine & Task Hub" />
+  <meta name="theme-color" content="#171717" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Consistent Habit" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MonoRoutine" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23171717%22%2F%3E%3Ccircle%20cx%3D%22256%22%20cy%3D%22115%22%20r%3D%2232%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2212%22%2F%3E%3Cpolyline%20points%3D%22256%2C97%20256%2C115%20272%2C115%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20105%20390%20L%20105%20220%20L%20169%20310%20L%20233%20220%20L%20233%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20287%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20347%20220%20C%20387%20220%20407%20242%20407%20280%20C%20407%20318%20387%20340%20347%20340%20L%20287%20340%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20342%20340%20L%20402%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23171717%22%2F%3E%3Ccircle%20cx%3D%22256%22%20cy%3D%22115%22%20r%3D%2232%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2212%22%2F%3E%3Cpolyline%20points%3D%22256%2C97%20256%2C115%20272%2C115%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20105%20390%20L%20105%20220%20L%20169%20310%20L%20233%20220%20L%20233%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20287%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20347%20220%20C%20387%20220%20407%20242%20407%20280%20C%20407%20318%20387%20340%20347%20340%20L%20287%20340%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20342%20340%20L%20402%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E" />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -113,77 +115,243 @@
     }
   </style>
 </head>
-<body class="h-full bg-[#F7F7F7] text-neutral-900 font-sans antialiased select-none overflow-x-hidden flex flex-col">
+<body class="h-full bg-[#F7F7F7] text-neutral-900 font-sans antialiased select-none overflow-hidden flex flex-col md:flex-row">
 
-  <!-- TOP APP BAR (Uniqlo Minimalist Aesthetic) -->
-  <header class="no-print sticky top-0 z-30 bg-white border-b border-neutral-200 px-4 py-3 pt-safe">
-    <div class="max-w-2xl mx-auto flex items-center justify-between">
+  <!-- DESKTOP / TABLET SIDEBAR NAVIGATION (Hidden on mobile < md) -->
+  <aside class="no-print hidden md:flex flex-col w-64 lg:w-72 bg-white border-r border-neutral-200 shrink-0 h-full justify-between z-30 select-none">
+    <!-- Brand Box & Real-Time Clock -->
+    <div class="p-5 border-b border-neutral-200 space-y-3">
       <div class="flex items-center space-x-3">
-        <!-- Uniqlo-inspired Red Badge Logo -->
-        <div class="w-9 h-9 bg-[#E60012] flex items-center justify-center text-white font-extrabold text-sm tracking-tighter shadow-none">
-          <span>CH</span>
+        <div class="w-9 h-9 bg-neutral-900 text-white flex items-center justify-center font-black text-sm tracking-tight rounded-md shrink-0 select-none" title="MonoRoutine Web App">
+          <span>MR</span>
         </div>
-        <div>
-          <h1 class="text-sm font-black tracking-wider text-neutral-900 uppercase leading-none">CONSISTENCY</h1>
-          <p class="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mt-0.5">Now or Never • Routine Hub</p>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-base font-black tracking-wider text-neutral-900 uppercase leading-none">MONOROUTINE</h1>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 border border-neutral-300 bg-neutral-100 text-neutral-700">WEB</span>
+          </div>
+          <p class="text-[10px] text-neutral-500 font-medium tracking-widest uppercase mt-1">HABIT &amp; DEADLINE HUB</p>
         </div>
       </div>
 
-      <!-- Header Action Controls -->
-      <div class="flex items-center space-x-2">
-        <!-- Emergency Alarm Stop Button (shown when ringing) -->
-        <button id="header-stop-alarm-btn" onclick="emergencyStopAlarm()" class="hidden pulse-alarm px-2.5 py-1.5 border border-[#E60012] text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition" title="Hentikan Alarm Sekarang">
-          <i data-lucide="bell-off" class="w-3.5 h-3.5"></i>
-          <span>Matikan Alarm</span>
-        </button>
+      <!-- Live Clock & Network Badge -->
+      <div class="bg-neutral-50 border border-neutral-200 p-2.5 space-y-1.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Waktu Lokal</span>
+          <span class="online-status-badge flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+            <span>Online (PWA)</span>
+          </span>
+        </div>
+        <div class="text-sm font-black text-neutral-900 font-mono tracking-tight" id="sidebar-clock-time">--:--:-- WIB</div>
+        <div class="text-[10px] text-neutral-500 truncate" id="sidebar-today-date">-</div>
+      </div>
+    </div>
 
-        <!-- Wake Lock Status Button -->
-        <button id="wakeLockBtn" onclick="toggleWakeLock()" class="flex items-center space-x-1.5 px-2.5 py-1.5 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold transition" title="Jaga Layar Aktif">
-          <i data-lucide="sun" id="wakeLockIcon" class="w-3.5 h-3.5 text-neutral-500"></i>
-          <span id="wakeLockLabel" class="hidden sm:inline">Layar Aktif: Mati</span>
-        </button>
+    <!-- Navigation Links -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-1.5">
+      <div class="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-2 pb-1">Navigasi Utama</div>
 
-        <!-- Notification Permission Button -->
-        <button id="notifBtn" onclick="requestNotifPermission()" class="p-2 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 transition" title="Izinkan Notifikasi">
-          <i data-lucide="bell" id="notifIcon" class="w-4 h-4 text-neutral-600"></i>
+      <!-- Tab 1: Rutinitas -->
+      <button onclick="switchTab('habits')" id="sidebar-nav-btn-habits" class="sidebar-nav-item w-full flex items-center justify-between px-3 py-2.5 text-xs rounded-md transition font-bold bg-neutral-900 text-white">
+        <div class="flex items-center space-x-2.5">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Rutinitas</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 bg-neutral-800 text-white rounded font-mono" id="sidebar-badge-habits">0/0</span>
+      </button>
+
+      <!-- Tab 2: Audio & Alarm -->
+      <button onclick="switchTab('alarms')" id="sidebar-nav-btn-alarms" class="sidebar-nav-item w-full flex items-center justify-between px-3 py-2.5 text-xs rounded-md transition text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium">
+        <div class="flex items-center space-x-2.5">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span>Audio &amp; Alarm</span>
+        </div>
+        <span class="text-[9px] px-1.5 py-0.5 border border-neutral-300 text-neutral-600">Synth</span>
+      </button>
+
+      <!-- Tab 3: Kalender & Streak -->
+      <button onclick="switchTab('calendar')" id="sidebar-nav-btn-calendar" class="sidebar-nav-item w-full flex items-center justify-between px-3 py-2.5 text-xs rounded-md transition text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium">
+        <div class="flex items-center space-x-2.5">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          <span>Kalender &amp; Streak</span>
+        </div>
+        <div class="flex items-center gap-1 text-[#E60012] font-black text-[10px]">
+          <i data-lucide="flame" class="w-3 h-3 text-[#E60012]"></i>
+          <span id="sidebar-badge-streak">0</span>
+        </div>
+      </button>
+
+      <!-- Tab 4: Tugas & Deadline -->
+      <button onclick="switchTab('tasks')" id="sidebar-nav-btn-tasks" class="sidebar-nav-item w-full flex items-center justify-between px-3 py-2.5 text-xs rounded-md transition text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium">
+        <div class="flex items-center space-x-2.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i>
+          <span>Tugas &amp; Batas Waktu</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 bg-[#E60012] text-white rounded font-mono font-bold" id="sidebar-badge-tasks">0</span>
+      </button>
+
+      <!-- Tab 5: Cadangan & Ekspor -->
+      <button onclick="switchTab('backup')" id="sidebar-nav-btn-backup" class="sidebar-nav-item w-full flex items-center justify-between px-3 py-2.5 text-xs rounded-md transition text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium">
+        <div class="flex items-center space-x-2.5">
+          <i data-lucide="database" class="w-4 h-4"></i>
+          <span>Cadangan &amp; Ekspor</span>
+        </div>
+        <span class="text-[9px] text-neutral-400">JSON/CSV</span>
+      </button>
+
+      <!-- Quick Action Buttons on Desktop -->
+      <div class="pt-4 space-y-2 border-t border-neutral-100">
+        <div class="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-2">Aksi Cepat Web</div>
+        <button onclick="openAddModal()" class="w-full py-2 px-3 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-between transition rounded-md">
+          <span class="flex items-center space-x-2">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Rutinitas Baru</span>
+          </span>
+          <kbd class="text-[9px] bg-neutral-700 px-1 rounded">N</kbd>
+        </button>
+        <button onclick="switchTab('tasks'); toggleNewTaskForm(true);" class="w-full py-2 px-3 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-bold uppercase tracking-wider flex items-center justify-between transition rounded-md">
+          <span class="flex items-center space-x-2">
+            <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-[#E60012]"></i>
+            <span>Tugas Baru</span>
+          </span>
+          <kbd class="text-[9px] bg-neutral-100 border border-neutral-300 px-1 rounded">T</kbd>
         </button>
       </div>
     </div>
-  </header>
 
-  <!-- STICKY EMERGENCY ACTIVE ALARM BANNER (Always Visible When Any Alarm is Ringing) -->
-  <aside id="sticky-alarm-banner" class="no-print hidden sticky top-14 z-40 bg-neutral-950 text-white border-b-2 border-[#E60012] px-4 py-3 shadow-lg">
-    <div class="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
-      <div class="flex items-center space-x-2.5 text-left w-full sm:w-auto">
-        <span class="w-3 h-3 rounded-full bg-[#E60012] animate-ping shrink-0"></span>
-        <div class="min-w-0 flex-1">
-          <div class="text-[10px] font-black uppercase tracking-widest text-[#E60012]">Peringatan Alarm Aktif</div>
-          <div class="text-xs font-extrabold truncate" id="sticky-alarm-text">Nama Rutinitas - 07:00 WIB</div>
-        </div>
-      </div>
-      <div class="flex items-center space-x-2 w-full sm:w-auto shrink-0 justify-end">
-        <button onclick="alarmActionComplete()" class="px-3 py-1.5 bg-white text-neutral-900 hover:bg-neutral-100 text-xs font-black uppercase tracking-wider transition">
-          Selesaikan
+    <!-- Sidebar Bottom Footer -->
+    <div class="p-4 border-t border-neutral-200 bg-neutral-50/70 space-y-2">
+      <!-- PWA Install Button (desktop) -->
+      <button onclick="triggerPWAInstall()" class="pwa-install-btn w-full py-2 px-2.5 border border-neutral-900 bg-white hover:bg-neutral-900 hover:text-white text-neutral-900 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition rounded-md">
+        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+        <span>Pasang Web App</span>
+      </button>
+
+      <div class="flex items-center justify-between text-[11px] pt-1">
+        <button onclick="openShortcutsModal()" class="text-neutral-500 hover:text-neutral-900 flex items-center space-x-1 font-bold">
+          <i data-lucide="keyboard" class="w-3.5 h-3.5"></i>
+          <span>Pintasan [?]</span>
         </button>
-        <button onclick="emergencyStopAlarm()" class="px-3.5 py-1.5 bg-[#E60012] hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition">
-          <i data-lucide="bell-off" class="w-3.5 h-3.5"></i>
-          <span>Matikan Alarm</span>
+        <button onclick="shareDailySummary()" class="text-neutral-500 hover:text-neutral-900 flex items-center space-x-1 font-bold" title="Bagikan Ringkasan">
+          <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+          <span>Bagikan</span>
         </button>
       </div>
     </div>
   </aside>
 
-  <!-- PRINT ONLY HEADER -->
-  <div class="print-only p-6 pb-3 border-b border-neutral-300">
-    <div class="flex items-center space-x-2 mb-2">
-      <div class="w-7 h-7 bg-[#E60012] text-white font-bold flex items-center justify-center text-xs">CH</div>
-      <h1 class="text-xl font-black tracking-wider text-neutral-900 uppercase">CONSISTENT HABIT - LAPORAN RUTINITAS</h1>
-    </div>
-    <p class="text-xs text-neutral-500" id="print-date-label">Dicetak pada: -</p>
-  </div>
+  <!-- MAIN SCROLLABLE VIEWPORT WRAPPER -->
+  <div class="flex-1 flex flex-col h-full min-w-0 overflow-y-auto">
 
-  <!-- MAIN SCROLLABLE CONTAINER -->
-  <main class="flex-1 overflow-y-auto pb-28 max-w-2xl w-full mx-auto p-4 space-y-4">
+    <!-- TOP WEB APP HEADER -->
+    <header class="no-print sticky top-0 z-30 bg-white border-b border-neutral-200 px-4 py-2.5 pt-safe">
+      <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+        <!-- Mobile Brand Logo & Title (shown on mobile, hidden on md+) -->
+        <div class="flex items-center space-x-2.5 md:hidden">
+          <div class="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center font-black text-sm tracking-tight rounded-md shrink-0 select-none" title="MonoRoutine Web App">
+            <span>MR</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <h1 class="text-sm font-black tracking-wider text-neutral-900 uppercase leading-none">MONOROUTINE</h1>
+              <span class="text-[8px] font-bold px-1 border border-neutral-300 bg-neutral-100 text-neutral-700">WEB</span>
+            </div>
+            <p class="text-[9px] text-neutral-500 font-medium tracking-widest uppercase mt-0.5">ROUTINE &amp; DEADLINE HUB</p>
+          </div>
+        </div>
+
+        <!-- Desktop Breadcrumb / Title & Quick Search -->
+        <div class="hidden md:flex items-center space-x-4 flex-1">
+          <div class="flex items-center space-x-2 text-xs font-bold text-neutral-500">
+            <span class="text-neutral-900 font-black uppercase tracking-wider" id="desktop-page-title">Daftar Kebiasaan</span>
+            <span>•</span>
+            <span class="font-normal" id="desktop-header-subtitle">Kelola konsistensi harian</span>
+          </div>
+
+          <!-- Global Quick Search Bar -->
+          <div class="relative max-w-xs w-full ml-auto">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+            <input type="text" id="global-search-input" oninput="onGlobalSearch(this.value)" placeholder="Cari rutinitas atau tugas..." class="w-full bg-neutral-50 border border-neutral-200 pl-8 pr-3 py-1.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 rounded-md transition" />
+          </div>
+        </div>
+
+        <!-- Header Action Controls -->
+        <div class="flex items-center space-x-2 shrink-0">
+          <!-- Emergency Alarm Stop Button (shown when ringing) -->
+          <button id="header-stop-alarm-btn" onclick="emergencyStopAlarm()" class="hidden pulse-alarm px-2.5 py-1.5 border border-[#E60012] text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition rounded-md" title="Hentikan Alarm Sekarang">
+            <i data-lucide="bell-off" class="w-3.5 h-3.5"></i>
+            <span>Matikan Alarm</span>
+          </button>
+
+          <!-- Live Clock Badge on Mobile/Desktop -->
+          <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 bg-neutral-50 border border-neutral-200 rounded-md text-xs font-mono font-bold text-neutral-700" title="Waktu Nyata">
+            <i data-lucide="clock" class="w-3.5 h-3.5 text-neutral-500"></i>
+            <span id="live-clock-time">--:--:-- WIB</span>
+          </div>
+
+          <!-- Web Share Button -->
+          <button onclick="shareDailySummary()" class="p-2 border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 rounded-md transition" title="Bagikan Ringkasan Hari Ini">
+            <i data-lucide="share-2" class="w-4 h-4 text-neutral-600"></i>
+          </button>
+
+          <!-- Fullscreen Mode Toggle Button -->
+          <button onclick="toggleFullscreen()" class="p-2 border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 rounded-md transition" title="Layar Penuh (F)">
+            <i data-lucide="maximize" class="w-4 h-4 text-neutral-600"></i>
+          </button>
+
+          <!-- Wake Lock Status Button -->
+          <button id="wakeLockBtn" onclick="toggleWakeLock()" class="flex items-center space-x-1.5 px-2.5 py-1.5 border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold rounded-md transition" title="Jaga Layar Aktif">
+            <i data-lucide="sun" id="wakeLockIcon" class="w-3.5 h-3.5 text-neutral-500"></i>
+            <span id="wakeLockLabel" class="hidden sm:inline">Layar Aktif: Mati</span>
+          </button>
+
+          <!-- Notification Permission Button -->
+          <button id="notifBtn" onclick="requestNotifPermission()" class="p-2 border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 rounded-md transition" title="Izinkan Notifikasi Web">
+            <i data-lucide="bell" id="notifIcon" class="w-4 h-4 text-neutral-600"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- STICKY EMERGENCY ACTIVE ALARM BANNER (Always Visible When Any Alarm is Ringing) -->
+    <aside id="sticky-alarm-banner" class="no-print hidden sticky top-14 z-40 bg-neutral-950 text-white border-b-2 border-[#E60012] px-4 py-3 shadow-lg">
+      <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+        <div class="flex items-center space-x-2.5 text-left w-full sm:w-auto">
+          <span class="w-3 h-3 rounded-full bg-[#E60012] animate-ping shrink-0"></span>
+          <div class="min-w-0 flex-1">
+            <div class="text-[10px] font-black uppercase tracking-widest text-[#E60012]">Peringatan Alarm Aktif</div>
+            <div class="text-xs font-extrabold truncate" id="sticky-alarm-text">Nama Rutinitas - 07:00 WIB</div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 w-full sm:w-auto shrink-0 justify-end">
+          <button onclick="alarmActionComplete()" class="px-3 py-1.5 bg-white text-neutral-900 hover:bg-neutral-100 text-xs font-black uppercase tracking-wider transition">
+            Selesaikan
+          </button>
+          <button onclick="emergencyStopAlarm()" class="px-3.5 py-1.5 bg-[#E60012] hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 transition">
+            <i data-lucide="bell-off" class="w-3.5 h-3.5"></i>
+            <span>Matikan Alarm</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- PRINT ONLY HEADER -->
+    <div class="print-only p-6 pb-3 border-b border-neutral-300">
+      <div class="flex items-center space-x-2 mb-2">
+        <div class="w-7 h-7 bg-neutral-900 flex items-center justify-center p-1 text-white shrink-0">
+          <svg class="w-full h-full text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 18 80 L 38 38 L 52 64 L 84 18" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M 60 52 L 80 80" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <h1 class="text-xl font-black tracking-wider text-neutral-900 uppercase">MONOROUTINE BACKUP - LAPORAN RUTINITAS &amp; TUGAS</h1>
+      </div>
+      <p class="text-xs text-neutral-500" id="print-date-label">Dicetak pada: -</p>
+    </div>
+
+    <!-- MAIN SCROLLABLE CONTAINER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-4 pb-28 md:pb-12">
 
     <!-- OVERVIEW HERO CARD (Clean Monochrome Grid) -->
     <section class="no-print bg-white border border-neutral-200 p-4 sm:p-5">
@@ -711,8 +879,8 @@
 
   </main>
 
-  <!-- BOTTOM NAVIGATION BAR (Uniqlo Minimalist Aesthetic) -->
-  <nav id="bottom-nav" class="no-print fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-neutral-200 pb-safe">
+  <!-- BOTTOM NAVIGATION BAR (Mobile only, hidden on md+) -->
+  <nav id="bottom-nav" class="no-print md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-neutral-200 pb-safe">
     <div class="max-w-2xl mx-auto grid grid-cols-5 h-14">
       <button onclick="switchTab('habits')" id="nav-btn-habits" class="nav-item flex flex-col items-center justify-center text-neutral-900 transition border-t-2 border-neutral-900">
         <i data-lucide="check-circle" class="w-4 h-4 mb-0.5"></i>
@@ -740,6 +908,8 @@
       </button>
     </div>
   </nav>
+
+  </div> <!-- Closes MAIN SCROLLABLE VIEWPORT WRAPPER -->
 
   <!-- MODAL: KONFIRMASI VALIDASI SELESAI (KUNCI STATUS TETAP) -->
   <div id="modal-confirm-completion" class="no-print fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-none hidden flex items-center justify-center p-4">
@@ -930,6 +1100,113 @@
     </div>
   </div>
 
+  <!-- MODAL: PINTASAN KEYBOARD WEB APP -->
+  <div id="modal-shortcuts" class="no-print fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-none hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-neutral-300 w-full max-w-md p-6 space-y-4 shadow-none">
+      <div class="flex items-center justify-between border-b border-neutral-200 pb-3">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="keyboard" class="w-4 h-4 text-neutral-900"></i>
+          <h3 class="text-xs font-black uppercase tracking-wider text-neutral-900">Pintasan Keyboard Web</h3>
+        </div>
+        <button onclick="closeShortcutsModal()" class="p-1 text-neutral-400 hover:text-neutral-900">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2 text-xs divide-y divide-neutral-100">
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Beralih ke Tab Rutinitas</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">1</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Beralih ke Tab Audio & Alarm</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">2</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Beralih ke Tab Kalender & Streak</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">3</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Beralih ke Tab Tugas & Deadline</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">4</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Beralih ke Tab Cadangan & Ekspor</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">5</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Buat Rutinitas Baru</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">N</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Buka / Tutup Form Tugas Baru</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">T</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Mode Layar Penuh (Fullscreen)</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">F</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Buka Panduan Pintasan Ini</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">?</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-neutral-600">Tutup Modal / Matikan Alarm Aktif</span>
+          <kbd class="px-2 py-0.5 bg-neutral-100 border border-neutral-300 text-neutral-900 font-mono font-bold rounded">Esc</kbd>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="closeShortcutsModal()" class="w-full py-2 bg-neutral-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-neutral-800 transition">
+          Mengerti
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PANDUAN INSTALASI WEB APP PWA -->
+  <div id="modal-pwa-install" class="no-print fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-none hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-neutral-300 w-full max-w-md p-6 space-y-4 shadow-none">
+      <div class="flex items-center justify-between border-b border-neutral-200 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center font-bold text-xs rounded">MR</div>
+          <h3 class="text-xs font-black uppercase tracking-wider text-neutral-900">Pasang MonoRoutine Web App</h3>
+        </div>
+        <button onclick="closePwaModal()" class="p-1 text-neutral-400 hover:text-neutral-900">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs text-neutral-600 leading-relaxed">
+        <p>MonoRoutine dirancang sebagai <strong>Progressive Web App (PWA)</strong> mandiri berkinerja tinggi yang dapat dijalankan langsung dari desktop, laptop, atau perangkat seluler tanpa toko aplikasi pihak ketiga.</p>
+        
+        <div class="bg-neutral-50 border border-neutral-200 p-3 space-y-2">
+          <div class="font-bold text-neutral-900 uppercase text-[10px] tracking-wider">Cara Pemasangan:</div>
+          <ul class="list-disc list-inside space-y-1 text-[11px] text-neutral-700">
+            <li><strong>Desktop (Chrome / Edge / Brave):</strong> Klik tombol <em>Pasang Web App</em> di bawah ini atau klik ikon download/install pada kolom alamat browser.</li>
+            <li><strong>iPhone / iPad (Safari):</strong> Tap tombol <em>Bagikan (Share)</em> lalu pilih <em>Tambah ke Layar Utama (Add to Home Screen)</em>.</li>
+            <li><strong>Android (Chrome):</strong> Tap menu 3 titik di kanan atas lalu pilih <em>Instal Aplikasi</em>.</li>
+          </ul>
+        </div>
+
+        <div class="flex items-center gap-2 text-[10px] text-neutral-500 font-medium">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+          <span>100% Offline Ready • Penyimpanan Lokal Pribadi • Tanpa Iklan</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 pt-2">
+        <button onclick="triggerPWAInstall()" class="flex-1 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-black uppercase tracking-wider transition rounded-md flex items-center justify-center space-x-1.5">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Pasang Sekarang</span>
+        </button>
+        <button onclick="closePwaModal()" class="px-4 py-2.5 border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-bold uppercase tracking-wider transition rounded-md">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- JAVASCRIPT APPLICATION CORE -->
   <script>
     /* ==========================================================================
@@ -942,6 +1219,84 @@
     const STORAGE_KEY_FCM_CONFIG = 'ch_fcm_config_v1';
     const STORAGE_KEY_FCM_TOKEN = 'ch_fcm_token_v1';
     const STORAGE_KEY_NOTIFIED_DEADLINES = 'ch_notified_deadlines_v1';
+
+    // Monochrome MonoRoutine Monogram "MR" with Clock Symbol Vector (512x512 SVG Data URI)
+    const MONOROUTINE_ICON_SVG = "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23171717%22%2F%3E%3Ccircle%20cx%3D%22256%22%20cy%3D%22115%22%20r%3D%2232%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2212%22%2F%3E%3Cpolyline%20points%3D%22256%2C97%20256%2C115%20272%2C115%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20105%20390%20L%20105%20220%20L%20169%20310%20L%20233%20220%20L%20233%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20287%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20287%20220%20L%20347%20220%20C%20387%20220%20407%20242%20407%20280%20C%20407%20318%20387%20340%20347%20340%20L%20287%20340%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M%20342%20340%20L%20402%20390%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2232%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E";
+
+    // Synchronous High-Resolution Monochrome PNG Generator via Canvas
+    function generateMonoRoutinePngDataUri() {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return MONOROUTINE_ICON_SVG;
+
+        // Black square background #171717 with subtle rounded corners
+        ctx.fillStyle = '#171717';
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(0, 0, 512, 512, 96);
+          ctx.fill();
+        } else {
+          ctx.fillRect(0, 0, 512, 512);
+        }
+
+        // Minimalist Clock Accent Symbol
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 12;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.arc(256, 115, 32, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(256, 97);
+        ctx.lineTo(256, 115);
+        ctx.lineTo(272, 115);
+        ctx.stroke();
+
+        // Bold "MR" Monogram Vector Lines
+        ctx.lineWidth = 32;
+        ctx.strokeStyle = '#FFFFFF';
+
+        // M
+        ctx.beginPath();
+        ctx.moveTo(105, 390);
+        ctx.lineTo(105, 220);
+        ctx.lineTo(169, 310);
+        ctx.lineTo(233, 220);
+        ctx.lineTo(233, 390);
+        ctx.stroke();
+
+        // R stem
+        ctx.beginPath();
+        ctx.moveTo(287, 220);
+        ctx.lineTo(287, 390);
+        ctx.stroke();
+
+        // R bowl
+        ctx.beginPath();
+        ctx.moveTo(287, 220);
+        ctx.lineTo(347, 220);
+        ctx.bezierCurveTo(387, 220, 407, 242, 407, 280);
+        ctx.bezierCurveTo(407, 318, 387, 340, 347, 340);
+        ctx.lineTo(287, 340);
+        ctx.stroke();
+
+        // R leg
+        ctx.beginPath();
+        ctx.moveTo(342, 340);
+        ctx.lineTo(402, 390);
+        ctx.stroke();
+
+        return canvas.toDataURL('image/png');
+      } catch (e) {
+        return MONOROUTINE_ICON_SVG;
+      }
+    }
 
     // Default Starter Tasks for Task & Deadline Manager
     const DEFAULT_TASKS = [
@@ -1310,11 +1665,8 @@
         audioCtx = null;
       }
       if ('vibrate' in navigator) {
-        navigator.vibrate(0);
-      }
-      if (window.AndroidBridge && typeof window.AndroidBridge.vibrate === 'function') {
         try {
-          window.AndroidBridge.vibrate(0);
+          navigator.vibrate(0);
         } catch (e) {}
       }
     }
@@ -1420,9 +1772,9 @@
       Notification.requestPermission().then(permission => {
         updateNotifIcon();
         if (permission === 'granted') {
-          new Notification('Consistent Habit Aktif', {
+          new Notification('MonoRoutine', {
             body: 'Pengingat dan alarm kebiasaan akan muncul tepat waktu.',
-            icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23E60012%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>'
+            icon: MONOROUTINE_ICON_SVG
           });
         }
       });
@@ -1523,8 +1875,9 @@
       // Web Notification
       if ('Notification' in window && Notification.permission === 'granted') {
         try {
-          new Notification(`Waktunya: ${habit.name}!`, {
-            body: `[${habit.category || 'Rutinitas'}] ${habit.time} WIB - ${habit.description || 'Buka Consistent Habit untuk mencatat streak hari ini!'}`,
+          new Notification(`MonoRoutine: Waktunya ${habit.name}!`, {
+            body: `[${habit.category || 'Rutinitas'}] ${habit.time} WIB - ${habit.description || 'Buka MonoRoutine untuk mencatat kegiatan hari ini!'}`,
+            icon: MONOROUTINE_ICON_SVG,
             requireInteraction: true
           });
         } catch (e) {
@@ -1532,22 +1885,11 @@
         }
       }
 
-      // Native Android Bridge Integration
-      if (window.AndroidBridge) {
-        try {
-          if (typeof window.AndroidBridge.showNotification === 'function') {
-            window.AndroidBridge.showNotification(`Alarm Rutinitas: ${habit.name}`, `[${habit.category || 'Rutinitas'}] ${habit.time} WIB`);
-          }
-          if (typeof window.AndroidBridge.vibrate === 'function') {
-            window.AndroidBridge.vibrate(800);
-          }
-        } catch (e) {
-          console.error("Bridge notification error", e);
-        }
-      }
-
+      // Web Vibrate API for Haptic Feedback
       if ('vibrate' in navigator) {
-        navigator.vibrate([400, 200, 400, 200, 800]);
+        try {
+          navigator.vibrate([400, 200, 400, 200, 800]);
+        } catch (e) {}
       }
 
       lucide.createIcons();
@@ -1561,6 +1903,12 @@
       }
 
       stopAllAudio();
+
+      if ('vibrate' in navigator) {
+        try {
+          navigator.vibrate(0);
+        } catch (e) {}
+      }
 
       const modal = document.getElementById('alarm-modal');
       if (modal) modal.classList.add('hidden');
@@ -1671,6 +2019,17 @@
     /* ==========================================================================
        6. UI RENDERING & FILTER MANAGEMENT (STATUS & KATEGORI)
        ========================================================================== */
+    let habitSearchQuery = '';
+    let taskSearchQuery = '';
+
+    function onGlobalSearch(query) {
+      const q = (query || '').trim().toLowerCase();
+      habitSearchQuery = q;
+      taskSearchQuery = q;
+      renderHabitsList();
+      renderTasks();
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => {
         el.classList.add('hidden');
@@ -1683,6 +2042,7 @@
         activeEl.classList.add('animate-fade-in');
       }
 
+      // Update Mobile Bottom Nav Active States
       document.querySelectorAll('.nav-item').forEach(btn => {
         btn.classList.remove('text-neutral-900', 'border-neutral-900');
         btn.classList.add('text-neutral-400', 'border-transparent');
@@ -1691,6 +2051,32 @@
       if (activeBtn) {
         activeBtn.classList.remove('text-neutral-400', 'border-transparent');
         activeBtn.classList.add('text-neutral-900', 'border-neutral-900');
+      }
+
+      // Update Desktop Sidebar Nav Active States
+      document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
+        btn.classList.remove('bg-neutral-900', 'text-white', 'font-bold');
+        btn.classList.add('text-neutral-600', 'hover:bg-neutral-100', 'hover:text-neutral-900', 'font-medium');
+      });
+      const activeSidebarBtn = document.getElementById(`sidebar-nav-btn-${tabId}`);
+      if (activeSidebarBtn) {
+        activeSidebarBtn.classList.remove('text-neutral-600', 'hover:bg-neutral-100', 'hover:text-neutral-900', 'font-medium');
+        activeSidebarBtn.classList.add('bg-neutral-900', 'text-white', 'font-bold');
+      }
+
+      // Update Desktop Header Breadcrumb & Subtitle
+      const tabMeta = {
+        'habits': { title: 'Daftar Rutinitas', sub: 'Pelacak konsistensi harian & kedisiplinan' },
+        'alarms': { title: 'Audio & Alarm Web', sub: 'Synthesizer frekuensi audio mandiri' },
+        'calendar': { title: 'Kalender & Streak', sub: 'Matriks riwayat konsistensi harian' },
+        'tasks': { title: 'Tugas & Batas Waktu', sub: 'Manajemen tenggat prioritas mendesak' },
+        'backup': { title: 'Cadangan & Ekspor', sub: 'Ekspor JSON, CSV, PDF, dan sinkronisasi' }
+      };
+      if (tabMeta[tabId]) {
+        const titleEl = document.getElementById('desktop-page-title');
+        const subEl = document.getElementById('desktop-header-subtitle');
+        if (titleEl) titleEl.textContent = tabMeta[tabId].title;
+        if (subEl) subEl.textContent = tabMeta[tabId].sub;
       }
 
       lucide.createIcons();
@@ -1753,6 +2139,14 @@
           if (habitCat.toLowerCase() !== currentCategoryFilter.toLowerCase()) {
             return false;
           }
+        }
+
+        // 3. Search Filter
+        if (habitSearchQuery) {
+          const nameMatch = (habit.name || '').toLowerCase().includes(habitSearchQuery);
+          const descMatch = (habit.description || '').toLowerCase().includes(habitSearchQuery);
+          const catMatch = (habit.category || '').toLowerCase().includes(habitSearchQuery);
+          if (!nameMatch && !descMatch && !catMatch) return false;
         }
 
         return true;
@@ -1867,6 +2261,16 @@
       document.getElementById('today-date-str').textContent = new Date().toLocaleDateString('id-ID', dateOptions);
       const printLabel = document.getElementById('print-date-label');
       if (printLabel) printLabel.textContent = `Dicetak pada: ${new Date().toLocaleDateString('id-ID', dateOptions)} ${new Date().toLocaleTimeString('id-ID')} WIB`;
+
+      // Update Desktop Sidebar Badges & Date
+      const sidebarBadgeHabits = document.getElementById('sidebar-badge-habits');
+      if (sidebarBadgeHabits) sidebarBadgeHabits.textContent = `${completedToday}/${totalToday}`;
+
+      const sidebarBadgeStreak = document.getElementById('sidebar-badge-streak');
+      if (sidebarBadgeStreak) sidebarBadgeStreak.textContent = bestStreak;
+
+      const sidebarTodayDate = document.getElementById('sidebar-today-date');
+      if (sidebarTodayDate) sidebarTodayDate.textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
     }
 
     function renderActiveAlarmsList() {
@@ -1996,15 +2400,23 @@
     /* ==========================================================================
        8. MODUL TASK & DEADLINE MANAGER (Monochrome Minimalist)
        ========================================================================== */
-    function toggleNewTaskForm() {
+    function toggleNewTaskForm(forceOpen = null) {
       const form = document.getElementById('task-form');
       const label = document.getElementById('btn-toggle-task-label');
-      if (form.classList.contains('hidden')) {
+      if (forceOpen === true) {
         form.classList.remove('hidden');
-        label.textContent = 'Tutup Form';
-      } else {
+        if (label) label.textContent = 'Tutup Form';
+      } else if (forceOpen === false) {
         form.classList.add('hidden');
-        label.textContent = 'Tugas Baru';
+        if (label) label.textContent = 'Tugas Baru';
+      } else {
+        if (form.classList.contains('hidden')) {
+          form.classList.remove('hidden');
+          if (label) label.textContent = 'Tutup Form';
+        } else {
+          form.classList.add('hidden');
+          if (label) label.textContent = 'Tugas Baru';
+        }
       }
     }
 
@@ -2110,11 +2522,22 @@
       if (statUrgentEl) statUrgentEl.textContent = urgentCount;
       if (statCompletedEl) statCompletedEl.textContent = completedCount;
 
+      // Update Desktop Sidebar Task Badge
+      const sidebarBadgeTasks = document.getElementById('sidebar-badge-tasks');
+      if (sidebarBadgeTasks) sidebarBadgeTasks.textContent = urgentCount > 0 ? `${urgentCount} Mendesak` : `${pendingCount}`;
+
       // Auto-sort from closest deadline to furthest
       const sortedTasks = [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
       // Filter
       const filtered = sortedTasks.filter(task => {
+        // Search Filter
+        if (taskSearchQuery) {
+          const titleMatch = (task.title || '').toLowerCase().includes(taskSearchQuery);
+          const notesMatch = (task.notes || '').toLowerCase().includes(taskSearchQuery);
+          if (!titleMatch && !notesMatch) return false;
+        }
+
         const diffHours = (new Date(task.deadline).getTime() - now) / 3600000;
         if (currentTaskFilter === 'pending') return !task.completed;
         if (currentTaskFilter === 'approaching') return !task.completed && diffHours <= 24 && diffHours > 0;
@@ -2247,14 +2670,11 @@
             playDeadlineChime(false);
 
             if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification(`Pengingat Deadline H-2: ${task.title}`, {
+              new Notification(`MonoRoutine: Deadline H-2 (${task.title})`, {
                 body: `Tenggat waktu dalam ${Math.round(diffHours)} jam lagi (${task.priority}). Siapkan pekerjaan Anda tepat waktu.`,
+                icon: MONOROUTINE_ICON_SVG,
                 requireInteraction: false
               });
-            }
-
-            if (window.AndroidBridge && typeof window.AndroidBridge.showNotification === 'function') {
-              window.AndroidBridge.showNotification(`Pengingat Deadline H-2`, `${task.title} (Sisa ${Math.round(diffHours)} jam)`);
             }
           }
         }
@@ -2269,19 +2689,17 @@
             playDeadlineChime(true);
 
             if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification(`MENDEKATI DEADLINE (<24 Jam): ${task.title}!`, {
+              new Notification(`MonoRoutine: MENDEKATI DEADLINE (<24 Jam): ${task.title}!`, {
                 body: `Prioritas: ${task.priority}. Sisa waktu kurang dari 24 jam (${Math.round(diffHours)} jam).`,
+                icon: MONOROUTINE_ICON_SVG,
                 requireInteraction: true
               });
             }
 
-            if (window.AndroidBridge) {
-              if (typeof window.AndroidBridge.showNotification === 'function') {
-                window.AndroidBridge.showNotification(`DEADLINE URGENT (<24 Jam)`, `${task.title} - Batas waktu segera berakhir!`);
-              }
-              if (typeof window.AndroidBridge.vibrate === 'function') {
-                window.AndroidBridge.vibrate(600);
-              }
+            if ('vibrate' in navigator) {
+              try {
+                navigator.vibrate(600);
+              } catch (e) {}
             }
           }
         }
@@ -2332,10 +2750,10 @@
         if (firebase.apps.length === 0) {
           const storedConfigStr = localStorage.getItem(STORAGE_KEY_FCM_CONFIG);
           const config = storedConfigStr ? JSON.parse(storedConfigStr) : {
-            apiKey: "AIzaSyConsistentHabitKeyPlaceholder_Demo",
-            authDomain: "consistenthabit-hub.firebaseapp.com",
-            projectId: "consistenthabit-hub",
-            storageBucket: "consistenthabit-hub.appspot.com",
+            apiKey: "AIzaSyMonoRoutineKeyPlaceholder_Demo",
+            authDomain: "monoroutine-hub.firebaseapp.com",
+            projectId: "monoroutine-hub",
+            storageBucket: "monoroutine-hub.appspot.com",
             messagingSenderId: "445682163672",
             appId: "1:445682163672:web:a1b2c3d4e5f67890"
           };
@@ -2347,10 +2765,10 @@
           fcmMessaging.onMessage(payload => {
             console.log('FCM Message received in foreground:', payload);
             playDeadlineChime(true);
-            const title = payload.notification ? payload.notification.title : 'Consistent Habit Reminder';
+            const title = payload.notification ? payload.notification.title : 'MonoRoutine Reminder';
             const body = payload.notification ? payload.notification.body : 'Pengingat baru tiba.';
             if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification(title, { body: body });
+              new Notification(title, { body: body, icon: MONOROUTINE_ICON_SVG });
             }
           });
         }
@@ -2452,23 +2870,17 @@
 
       // Web Notification
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Pengujian FCM & Pengingat Berhasil', {
-          body: 'Notifikasi push Consistent Habit berfungsi dengan baik dan tepat waktu.',
-          icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%2032%2032%22><rect width=%2232%22 height=%2232%22 fill=%22%23E60012%22/><text x=%2216%22 y=%2222%22 font-family=%22sans-serif%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>'
+        new Notification('MonoRoutine: Pengujian Notifikasi Berhasil', {
+          body: 'Notifikasi push MonoRoutine Web App berfungsi dengan baik dan tepat waktu.',
+          icon: MONOROUTINE_ICON_SVG
         });
       } else {
         requestNotifPermission();
       }
 
-      // Android Native Bridge
-      if (window.AndroidBridge) {
+      if ('vibrate' in navigator) {
         try {
-          if (typeof window.AndroidBridge.showNotification === 'function') {
-            window.AndroidBridge.showNotification('Uji FCM Berhasil', 'Pengingat kebiasaan & deadline aktif.');
-          }
-          if (typeof window.AndroidBridge.vibrate === 'function') {
-            window.AndroidBridge.vibrate(400);
-          }
+          navigator.vibrate(400);
         } catch (e) {}
       }
 
@@ -2501,7 +2913,7 @@
        ========================================================================== */
     function exportJSON() {
       const backupData = {
-        appName: "Consistent Habit: Routine & Reminder Hub",
+        appName: "MonoRoutine Backup",
         theme: "Minimalist Monochrome Uniqlo",
         version: 2.1,
         exportedAt: new Date().toISOString(),
@@ -2514,7 +2926,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `ConsistentHabit_Backup_${getTodayDateString()}.json`);
+      downloadAnchor.setAttribute("download", `MonoRoutine_Backup_${getTodayDateString()}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -2543,7 +2955,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `ConsistentHabit_Export_${getTodayDateString()}.csv`);
+      link.setAttribute("download", `MonoRoutine_Export_${getTodayDateString()}.csv`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -2551,7 +2963,7 @@
 
     function exportTXT() {
       let txt = "====================================================\n";
-      txt += "  CONSISTENT HABIT: ROUTINE & REMINDER HUB\n";
+      txt += "  MONOROUTINE BACKUP\n";
       txt += "  Laporan Minimalist Monochrome Rutinitas & Tugas\n";
       txt += `  Diekspor: ${new Date().toLocaleString('id-ID')} WIB\n`;
       txt += "====================================================\n\n";
@@ -2585,7 +2997,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `ConsistentHabit_Log_${getTodayDateString()}.txt`);
+      link.setAttribute("download", `MonoRoutine_Log_${getTodayDateString()}.txt`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -2764,19 +3176,48 @@
        ========================================================================== */
     function setupDynamicPWA() {
       try {
+        const pngIcon = generateMonoRoutinePngDataUri();
+        const svgIcon = MONOROUTINE_ICON_SVG;
+
+        // Ensure apple-touch-icon and standard icon links reference the new monochrome icon
+        let linkApple = document.querySelector('link[rel="apple-touch-icon"]');
+        if (!linkApple) {
+          linkApple = document.createElement('link');
+          linkApple.rel = 'apple-touch-icon';
+          document.head.appendChild(linkApple);
+        }
+        linkApple.href = pngIcon;
+
+        let linkFaviconPng = document.querySelector('link[rel="icon"][type="image/png"]');
+        if (!linkFaviconPng) {
+          linkFaviconPng = document.createElement('link');
+          linkFaviconPng.rel = 'icon';
+          linkFaviconPng.type = 'image/png';
+          linkFaviconPng.setAttribute('sizes', '512x512');
+          document.head.appendChild(linkFaviconPng);
+        }
+        linkFaviconPng.href = pngIcon;
+
         const manifestObj = {
-          name: "Consistent Habit: Routine & Reminder Hub",
-          short_name: "Consistent Habit",
+          name: "MonoRoutine",
+          short_name: "MonoRoutine",
           start_url: "./",
           display: "standalone",
-          background_color: "#FFFFFF",
-          theme_color: "#FFFFFF",
+          background_color: "#ffffff",
+          theme_color: "#171717",
           orientation: "portrait",
           icons: [
             {
-              src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20192%20192%22><rect width=%22192%22 height=%22192%22 fill=%22%23E60012%22/><text x=%2296%22 y=%22120%22 font-family=%22sans-serif%22 font-size=%2280%22 font-weight=%22900%22 text-anchor=%22middle%22 fill=%22white%22>CH</text></svg>",
-              sizes: "192x192",
-              type: "image/svg+xml"
+              src: pngIcon,
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "any maskable"
+            },
+            {
+              src: svgIcon,
+              sizes: "192x192 512x512",
+              type: "image/svg+xml",
+              purpose: "any"
             }
           ]
         };
@@ -2793,7 +3234,7 @@
 
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
           const swCode = `
-            const CACHE_NAME = 'ch-cache-v2';
+            const CACHE_NAME = 'monoroutine-cache-v4';
             self.addEventListener('install', event => { self.skipWaiting(); });
             self.addEventListener('activate', event => { event.waitUntil(clients.claim()); });
             self.addEventListener('fetch', event => {
@@ -2810,7 +3251,157 @@
     }
 
     /* ==========================================================================
-       12. INITIALIZATION
+       12. WEB APP STANDALONE APIS (Clock, Fullscreen, Web Share, Shortcuts, PWA)
+       ========================================================================== */
+    function updateLiveClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const timeStr = `${hours}:${minutes}:${seconds} WIB`;
+      
+      const headerClock = document.getElementById('live-clock-time');
+      if (headerClock) headerClock.textContent = timeStr;
+      
+      const sidebarClock = document.getElementById('sidebar-clock-time');
+      if (sidebarClock) sidebarClock.textContent = timeStr;
+    }
+
+    function updateOnlineStatus() {
+      const isOnline = navigator.onLine;
+      document.querySelectorAll('.online-status-badge').forEach(badge => {
+        if (isOnline) {
+          badge.className = 'online-status-badge flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full';
+          badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span><span>Online (PWA)</span>`;
+        } else {
+          badge.className = 'online-status-badge flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-neutral-600 bg-neutral-100 border border-neutral-300 px-2 py-0.5 rounded-full';
+          badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-neutral-400 inline-block"></span><span>Offline (Lokal)</span>`;
+        }
+      });
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    async function shareDailySummary() {
+      const today = getTodayDateString();
+      const todayLogs = completionLogs[today] || [];
+      const dayOfWeek = new Date().getDay();
+      const scheduledToday = habits.filter(h => h.enabled && (h.days ? h.days.includes(dayOfWeek) : true));
+      const total = scheduledToday.length;
+      const completed = scheduledToday.filter(h => todayLogs.includes(h.id)).length;
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      let bestStreak = 0;
+      habits.forEach(h => {
+        if ((h.streak || 0) > bestStreak) bestStreak = h.streak;
+        if ((h.bestStreak || 0) > bestStreak) bestStreak = h.bestStreak;
+      });
+
+      const now = Date.now();
+      const urgentTasks = tasks.filter(t => !t.completed && ((new Date(t.deadline).getTime() - now) / 3600000 <= 24 && (new Date(t.deadline).getTime() - now) > 0));
+
+      const text = `📊 MONOROUTINE - Ringkasan Progres Harian (${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })})
+• Rutinitas Selesai: ${completed}/${total} (${pct}%)
+• Streak Tertinggi: ${bestStreak} Hari
+• Tugas Mendesak (<24 Jam): ${urgentTasks.length} Tugas
+Tetap disiplin dan produktif bersama MonoRoutine Web App!`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'MonoRoutine Progres Harian',
+            text: text,
+            url: window.location.href
+          });
+          return;
+        } catch (e) {
+          // Fallback to clipboard
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Ringkasan progres harian disalin ke clipboard:\n\n" + text);
+      } catch (err) {
+        alert(text);
+      }
+    }
+
+    function openShortcutsModal() {
+      document.getElementById('modal-shortcuts').classList.remove('hidden');
+    }
+
+    function closeShortcutsModal() {
+      document.getElementById('modal-shortcuts').classList.add('hidden');
+    }
+
+    function openPwaModal() {
+      document.getElementById('modal-pwa-install').classList.remove('hidden');
+    }
+
+    function closePwaModal() {
+      document.getElementById('modal-pwa-install').classList.add('hidden');
+    }
+
+    let deferredPwaPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      document.querySelectorAll('.pwa-install-btn').forEach(btn => btn.classList.remove('hidden'));
+    });
+
+    function triggerPWAInstall() {
+      if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        deferredPwaPrompt.userChoice.then(() => {
+          deferredPwaPrompt = null;
+        });
+      } else {
+        openPwaModal();
+      }
+    }
+
+    // Keyboard Shortcuts Event Listener
+    window.addEventListener('keydown', (e) => {
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      const isInput = activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select';
+      
+      if (e.key === 'Escape') {
+        closeAddModal();
+        closeConfirmModal();
+        closeShortcutsModal();
+        closePwaModal();
+        if (activeRingingHabit) {
+          emergencyStopAlarm();
+        }
+        return;
+      }
+
+      if (isInput) return;
+
+      if (e.key === '1') { switchTab('habits'); }
+      else if (e.key === '2') { switchTab('alarms'); }
+      else if (e.key === '3') { switchTab('calendar'); }
+      else if (e.key === '4') { switchTab('tasks'); }
+      else if (e.key === '5') { switchTab('backup'); }
+      else if (e.key.toLowerCase() === 'n') { e.preventDefault(); openAddModal(); }
+      else if (e.key.toLowerCase() === 't') { e.preventDefault(); switchTab('tasks'); toggleNewTaskForm(true); }
+      else if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFullscreen(); }
+      else if (e.key === '?') { e.preventDefault(); openShortcutsModal(); }
+    });
+
+    /* ==========================================================================
+       13. INITIALIZATION
        ========================================================================== */
     function renderAll() {
       renderHeaderStats();
@@ -2835,6 +3426,13 @@
       renderAll();
       startAlarmWatcher();
       updateNotifIcon();
+
+      // Live Clock & Network Status
+      updateLiveClock();
+      setInterval(updateLiveClock, 1000);
+      updateOnlineStatus();
+      window.addEventListener('online', updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
 
       // Initialize FCM and Deadline Checker
       initFCM();
